@@ -1,6 +1,6 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "Shipping & Delivery — Zelko" };
+export const metadata = { title: "Shipping & Delivery — FetchWow" };
 
 export default function ShippingPage() {
   return (
