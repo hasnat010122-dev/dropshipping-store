@@ -61,7 +61,7 @@ export default async function SearchPage({
           </>
         ) : (
           <h1 className="font-display text-2xl sm:text-3xl text-ink mb-1">
-            Search Zelko
+            Search FetchWow
           </h1>
         )}
 
