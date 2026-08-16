@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getProductById, updateProduct, deleteProduct } from "@/lib/db";
+import { getProductById, getProductByIdAdmin, updateProduct, updateProductPublicationStatus, deleteProduct, toPublicProduct } from "@/lib/db";
 import { isAdmin } from "@/lib/auth";
 
 export async function GET(
@@ -7,9 +7,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const row = getProductById(id);
+  const admin = await isAdmin();
+  const row = admin ? getProductByIdAdmin(id) : getProductById(id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(row);
+  return NextResponse.json(admin ? row : toPublicProduct(row));
 }
 
 export async function PUT(
@@ -35,7 +36,7 @@ export async function PUT(
     supplierCost,
   } = body;
 
-  const existing = getProductById(id);
+  const existing = getProductByIdAdmin(id);
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const updated = updateProduct(id, {
@@ -53,6 +54,25 @@ export async function PUT(
   });
 
   return NextResponse.json(updated);
+}
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Not allowed" }, { status: 401 });
+  const { id } = await params;
+  const product = getProductByIdAdmin(id);
+  if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const { publicationStatus } = await req.json();
+  if (!["draft", "approved", "published"].includes(publicationStatus)) {
+    return NextResponse.json({ error: "Invalid publication status" }, { status: 400 });
+  }
+  const current = product.publicationStatus || "published";
+  if (publicationStatus === "published" && current !== "approved") {
+    return NextResponse.json({ error: "Approve the product before publishing it." }, { status: 409 });
+  }
+  return NextResponse.json(updateProductPublicationStatus(id, publicationStatus));
 }
 
 export async function DELETE(

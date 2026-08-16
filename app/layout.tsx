@@ -8,13 +8,13 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
   ),
   title: {
-    default: "Zelko — Great finds, everyday prices",
+    default: "FetchWow — Great finds, everyday prices",
     template: "%s",
   },
   description:
-    "Zelko is a store for the things you didn't know you needed until you saw them. Fast local delivery in Pakistan, worldwide shipping everywhere else.",
+    "FetchWow is a store for the things you didn't know you needed until you saw them. Fast local delivery in Pakistan, worldwide shipping everywhere else.",
   openGraph: {
-    siteName: "Zelko",
+    siteName: "FetchWow",
     type: "website",
   },
 };

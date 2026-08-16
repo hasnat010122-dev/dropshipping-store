@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import { getOrderById } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { getSessionUserId } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +13,9 @@ export default async function OrderConfirmationPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const userId = await getSessionUserId();
   const order = getOrderById(id);
-  if (!order) notFound();
+  if (!order || !userId || order.userId !== userId) notFound();
 
   const items = order.items;
 

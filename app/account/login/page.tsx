@@ -10,7 +10,8 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const oauthError = searchParams.get("error");
-  const returnTo = searchParams.get("returnTo") || "";
+  const requestedReturn = searchParams.get("returnTo") || "";
+  const returnTo = requestedReturn.startsWith("/") && !requestedReturn.startsWith("//") ? requestedReturn : "";
   const isCheckoutFlow = returnTo === "/checkout";
 
   const [email, setEmail] = useState("");

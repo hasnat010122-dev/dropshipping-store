@@ -36,8 +36,7 @@ export default function CheckoutPage() {
   const [selectedAddressId, setSelectedAddressId] = useState<string | "new">("new");
   const [signedIn, setSignedIn] = useState(false);
 
-  // Prefill from a signed-in account, if there is one — guest checkout
-  // works exactly the same without this.
+  // Checkout is verification-gated; prefill the signed-in account and saved addresses.
   useEffect(() => {
     fetch("/api/auth/me")
       .then((r) => r.json())
@@ -257,14 +256,14 @@ export default function CheckoutPage() {
                 </label>
                 <label className="block">
                   <span className="text-sm font-body text-ink-soft mb-1.5 block">
-                    Email <span className="text-ink-soft/40">(optional)</span>
+                    Verified email
                   </span>
                   <input
                     type="email"
                     value={form.email}
-                    onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="you@example.com"
-                    className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors"
+                    readOnly
+                    placeholder="Signed-in email"
+                    className="focus-ring w-full border border-line bg-paper-dim px-3.5 py-3 outline-none text-ink-soft"
                   />
                 </label>
                 <label className="block">

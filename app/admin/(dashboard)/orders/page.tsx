@@ -101,17 +101,26 @@ export default function AdminOrdersPage() {
   }, []);
 
   async function patchOrder(id: string, body: Record<string, unknown>) {
-    setOrders((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, ...body } : o))
-    );
-    await fetch(`/api/orders/${id}`, {
+    const res = await fetch(`/api/orders/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
+    const data = await res.json();
+    if (!res.ok) {
+      alert(data.error || "Order could not be updated.");
+      await load();
+      return false;
+    }
+    setOrders((prev) => prev.map((order) => (order.id === id ? data : order)));
+    return true;
   }
 
   function markSentToSupplier(order: OrderRow, group: SupplierGroup, via: string) {
+    if ((order.approvalStatus || "pending") !== "approved") {
+      alert("Approve this order before forwarding it to a supplier.");
+      return;
+    }
     patchOrder(order.id, {
       supplierId: group.supplier.id,
       fulfillmentStatus: "ordered_from_supplier",
@@ -192,6 +201,29 @@ export default function AdminOrdersPage() {
                       ))}
                     </select>
                   </div>
+                </div>
+
+                <div className={`mb-3 rounded-lg border px-3 py-2.5 flex flex-wrap items-center gap-2 ${
+                  (o.approvalStatus || "pending") === "approved"
+                    ? "border-emerald-400/25 bg-emerald-400/5"
+                    : (o.approvalStatus || "pending") === "rejected"
+                    ? "border-red-400/25 bg-red-400/5"
+                    : "border-amber-400/25 bg-amber-400/5"
+                }`}>
+                  <span className="text-xs text-white/60">
+                    Owner approval: <b className="uppercase text-white">{o.approvalStatus || "pending"}</b>
+                  </span>
+                  <span className="flex-1" />
+                  {(o.approvalStatus || "pending") !== "approved" && (
+                    <button onClick={() => patchOrder(o.id, { approvalStatus: "approved" })} className="focus-ring text-xs rounded-md bg-emerald-500 px-3 py-1.5 text-white hover:bg-emerald-400">
+                      Approve order
+                    </button>
+                  )}
+                  {(o.approvalStatus || "pending") === "pending" && (
+                    <button onClick={() => patchOrder(o.id, { approvalStatus: "rejected" })} className="focus-ring text-xs rounded-md border border-red-400/30 px-3 py-1.5 text-red-200 hover:bg-red-400/10">
+                      Reject
+                    </button>
+                  )}
                 </div>
 
                 {/* Which supplier owns this order — always visible, not tucked away */}
@@ -281,41 +313,22 @@ export default function AdminOrdersPage() {
                                 </li>
                               ))}
                             </ul>
-                            <div className="flex gap-2">
-                              {group.supplier.email ? (
-                                <a
-                                  href={`mailto:${group.supplier.email}?subject=${encodeURIComponent(
-                                    `New order — ${BRAND.name} #${o.id.slice(0, 8).toUpperCase()}`
-                                  )}&body=${encodeURIComponent(buildSupplierMessage(o, group))}`}
-                                  onClick={() => markSentToSupplier(o, group, "email")}
-                                  className="focus-ring flex items-center gap-1.5 text-xs border border-white/10 rounded-lg px-3 py-2 text-white/70 hover:border-coral hover:text-coral transition-colors"
-                                >
-                                  <Mail size={13} /> Email order
-                                </a>
-                              ) : (
-                                <span className="text-xs text-white/25 px-3 py-2">
-                                  No supplier email on file
-                                </span>
-                              )}
-                              {group.supplier.phone ? (
-                                <a
-                                  href={whatsappLink(
-                                    group.supplier.phone,
-                                    buildSupplierMessage(o, group)
-                                  )}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={() => markSentToSupplier(o, group, "WhatsApp")}
-                                  className="focus-ring flex items-center gap-1.5 text-xs border border-white/10 rounded-lg px-3 py-2 text-white/70 hover:border-emerald-400 hover:text-emerald-400 transition-colors"
-                                >
-                                  <MessageCircle size={13} /> WhatsApp order
-                                </a>
-                              ) : (
-                                <span className="text-xs text-white/25 px-3 py-2">
-                                  No supplier phone on file
-                                </span>
-                              )}
-                            </div>
+                            {(o.approvalStatus || "pending") === "approved" ? (
+                              <div className="flex gap-2">
+                                {group.supplier.email ? (
+                                  <a href={`mailto:${group.supplier.email}?subject=${encodeURIComponent(`New order — ${BRAND.name} #${o.id.slice(0, 8).toUpperCase()}`)}&body=${encodeURIComponent(buildSupplierMessage(o, group))}`} onClick={() => markSentToSupplier(o, group, "email")} className="focus-ring flex items-center gap-1.5 text-xs border border-white/10 rounded-lg px-3 py-2 text-white/70 hover:border-coral hover:text-coral transition-colors">
+                                    <Mail size={13} /> Email order
+                                  </a>
+                                ) : <span className="text-xs text-white/25 px-3 py-2">No supplier email on file</span>}
+                                {group.supplier.phone ? (
+                                  <a href={whatsappLink(group.supplier.phone, buildSupplierMessage(o, group))} target="_blank" rel="noopener noreferrer" onClick={() => markSentToSupplier(o, group, "WhatsApp")} className="focus-ring flex items-center gap-1.5 text-xs border border-white/10 rounded-lg px-3 py-2 text-white/70 hover:border-emerald-400 hover:text-emerald-400 transition-colors">
+                                    <MessageCircle size={13} /> WhatsApp order
+                                  </a>
+                                ) : <span className="text-xs text-white/25 px-3 py-2">No supplier phone on file</span>}
+                              </div>
+                            ) : (
+                              <p className="text-xs text-amber-200 border border-amber-400/20 bg-amber-400/5 rounded-lg px-3 py-2">Approve this order above before supplier forwarding controls are enabled.</p>
+                            )}
                           </div>
                         ))}
                       </div>
@@ -358,12 +371,13 @@ export default function AdminOrdersPage() {
                         </span>
                         <select
                           value={o.fulfillmentStatus}
+                          disabled={(o.approvalStatus || "pending") !== "approved"}
                           onChange={(e) =>
                             patchOrder(o.id, {
                               fulfillmentStatus: e.target.value,
                             })
                           }
-                          className={`${inputClass} w-full`}
+                          className={`${inputClass} w-full disabled:opacity-40 disabled:cursor-not-allowed`}
                         >
                           {FULFILLMENT_STATUSES.map((f) => (
                             <option key={f.value} value={f.value}>

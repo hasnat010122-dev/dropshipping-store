@@ -11,7 +11,8 @@ function VerifyForm() {
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const [devCode, setDevCode] = useState(searchParams.get("dev"));
-  const returnTo = searchParams.get("returnTo") || "";
+  const requestedReturn = searchParams.get("returnTo") || "";
+  const returnTo = requestedReturn.startsWith("/") && !requestedReturn.startsWith("//") ? requestedReturn : "";
   const isCheckoutFlow = returnTo === "/checkout";
 
   const [code, setCode] = useState("");

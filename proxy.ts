@@ -1,61 +1,32 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-import { ADMIN_COOKIE } from "@/lib/auth";
-import { SESSION_COOKIE } from "@/lib/session";
-
-function getSecret() {
-  const secret = process.env.SESSION_SECRET || "dev-only-insecure-secret-change-me";
-  return new TextEncoder().encode(secret);
-}
-
-async function hasValidSession(req: NextRequest) {
-  const token = req.cookies.get(SESSION_COOKIE)?.value;
-  if (!token) return false;
-  try {
-    await jwtVerify(token, getSecret());
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { ADMIN_COOKIE, verifyAdminToken } from "@/lib/auth";
+import { SESSION_COOKIE, verifyCustomerToken } from "@/lib/session";
 
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // ---- Admin area ----
   if (pathname.startsWith("/admin")) {
-    const isLoggedIn = req.cookies.get(ADMIN_COOKIE)?.value === "true";
+    const isLoggedIn = await verifyAdminToken(req.cookies.get(ADMIN_COOKIE)?.value);
     const isLoginPage = pathname === "/admin/login";
-
     if (!isLoggedIn && !isLoginPage) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/admin/login";
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
     if (isLoggedIn && isLoginPage) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/admin";
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL("/admin", req.url));
     }
     return NextResponse.next();
   }
 
-  // ---- Customer account area (and checkout, which requires sign-in) ----
   if (pathname.startsWith("/account") || pathname === "/checkout") {
-    const isAuthPage =
-      pathname === "/account/login" || pathname === "/account/verify";
-    const signedIn = await hasValidSession(req);
-
+    const isAuthPage = pathname === "/account/login" || pathname === "/account/verify";
+    const signedIn = !!(await verifyCustomerToken(req.cookies.get(SESSION_COOKIE)?.value));
     if (!signedIn && !isAuthPage) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/account/login";
+      const url = new URL("/account/login", req.url);
       url.searchParams.set("returnTo", pathname);
       return NextResponse.redirect(url);
     }
     if (signedIn && isAuthPage) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/account";
-      return NextResponse.redirect(url);
+      return NextResponse.redirect(new URL("/account", req.url));
     }
     return NextResponse.next();
   }

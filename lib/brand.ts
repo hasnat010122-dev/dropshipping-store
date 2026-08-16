@@ -1,5 +1,5 @@
 export const BRAND = {
-  name: "Zelko",
+  name: "FetchWow",
   tagline: "Great finds, everyday prices",
-  domain: "zelko.com", // update once you've confirmed and purchased a domain
+  domain: "fetchwow.online",
 } as const;

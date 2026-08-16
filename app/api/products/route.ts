@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getAllProducts, createProduct } from "@/lib/db";
+import { getAllProducts, getAllProductsAdmin, createProduct, toPublicProduct } from "@/lib/db";
 import { isAdmin } from "@/lib/auth";
 
 export async function GET() {
-  const rows = getAllProducts();
-  return NextResponse.json(rows);
+  const admin = await isAdmin();
+  const rows = admin ? getAllProductsAdmin() : getAllProducts();
+  return NextResponse.json(admin ? rows : rows.map(toPublicProduct));
 }
 
 export async function POST(req: NextRequest) {

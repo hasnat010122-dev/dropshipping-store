@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import crypto from "crypto";
 import { v4 as uuid } from "uuid";
 
 const dataDir = path.join(process.cwd(), "data");
@@ -25,8 +26,17 @@ export type ProductRow = {
   supplierId: string | null;
   supplierProductUrl: string | null;
   supplierCost: number | null;
+  publicationStatus?: "draft" | "approved" | "published";
   createdAt: string;
 };
+
+export type PublicProductRow = Omit<ProductRow, "supplierId" | "supplierProductUrl" | "supplierCost">;
+
+export function toPublicProduct(product: ProductRow): PublicProductRow {
+  return Object.fromEntries(
+    Object.entries(product).filter(([key]) => !["supplierId", "supplierProductUrl", "supplierCost"].includes(key))
+  ) as PublicProductRow;
+}
 
 export type OrderItem = { id: string; name: string; price: number; qty: number };
 
@@ -51,6 +61,9 @@ export type OrderRow = {
   discount: number;
   total: number;
   status: string;
+  approvalStatus?: "pending" | "approved" | "rejected";
+  approvedAt?: string | null;
+  approvedBy?: string | null;
   supplierId: string | null;
   fulfillmentStatus: FulfillmentStatus;
   supplierTrackingNumber: string | null;
@@ -58,6 +71,14 @@ export type OrderRow = {
   fulfillmentNotes: string | null;
   createdAt: string;
 };
+
+export type CustomerOrderRow = Omit<OrderRow, "supplierId" | "fulfillmentNotes">;
+
+export function toCustomerOrder(order: OrderRow): CustomerOrderRow {
+  return Object.fromEntries(
+    Object.entries(order).filter(([key]) => !["supplierId", "fulfillmentNotes"].includes(key))
+  ) as CustomerOrderRow;
+}
 
 export type SupplierRow = {
   id: string;
@@ -78,6 +99,11 @@ export type ActivityType =
   | "product_added"
   | "product_updated"
   | "product_deleted"
+  | "product_approved"
+  | "product_published"
+  | "product_unpublished"
+  | "order_approved"
+  | "order_rejected"
   | "supplier_added"
   | "supplier_updated"
   | "supplier_deleted"
@@ -261,15 +287,24 @@ export function getRecentActivity(limit = 20): ActivityRow[] {
 
 // ---------- Products ----------
 
+function sortProducts(rows: ProductRow[]): ProductRow[] {
+  return rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+}
+
 export function getAllProducts(): ProductRow[] {
-  const rows = readJSON<ProductRow[]>(productsFile);
-  return rows.sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+  return sortProducts(readJSON<ProductRow[]>(productsFile).filter((product) => !product.publicationStatus || product.publicationStatus === "published"));
+}
+
+export function getAllProductsAdmin(): ProductRow[] {
+  return sortProducts(readJSON<ProductRow[]>(productsFile));
 }
 
 export function getProductById(id: string): ProductRow | undefined {
-  return readJSON<ProductRow[]>(productsFile).find((p) => p.id === id);
+  return getAllProducts().find((product) => product.id === id);
+}
+
+export function getProductByIdAdmin(id: string): ProductRow | undefined {
+  return readJSON<ProductRow[]>(productsFile).find((product) => product.id === id);
 }
 
 export function getProductsByCategory(
@@ -286,7 +321,7 @@ export function createProduct(
   data: Omit<ProductRow, "id" | "createdAt">
 ): ProductRow {
   const rows = readJSON<ProductRow[]>(productsFile);
-  const row: ProductRow = { ...data, id: uuid(), createdAt: new Date().toISOString() };
+  const row: ProductRow = { ...data, id: uuid(), publicationStatus: "draft", createdAt: new Date().toISOString() };
   rows.push(row);
   writeJSON(productsFile, rows);
   logActivity("product_added", `Added product "${row.name}"`);
@@ -303,6 +338,21 @@ export function updateProduct(
   rows[idx] = { ...rows[idx], ...data };
   writeJSON(productsFile, rows);
   logActivity("product_updated", `Updated product "${rows[idx].name}"`);
+  return rows[idx];
+}
+
+export function updateProductPublicationStatus(
+  id: string,
+  publicationStatus: "draft" | "approved" | "published"
+): ProductRow | undefined {
+  const rows = readJSON<ProductRow[]>(productsFile);
+  const idx = rows.findIndex((product) => product.id === id);
+  if (idx === -1) return undefined;
+  const previous = rows[idx].publicationStatus || "published";
+  rows[idx].publicationStatus = publicationStatus;
+  writeJSON(productsFile, rows);
+  const type: ActivityType = publicationStatus === "approved" ? (previous === "published" ? "product_unpublished" : "product_approved") : publicationStatus === "published" ? "product_published" : "product_unpublished";
+  logActivity(type, `Product "${rows[idx].name}" changed from ${previous} to ${publicationStatus}`);
   return rows[idx];
 }
 
@@ -348,6 +398,9 @@ export function createOrder(
     ...data,
     id: uuid(),
     status: "pending",
+    approvalStatus: "pending",
+    approvedAt: null,
+    approvedBy: null,
     supplierId: null,
     fulfillmentStatus: "not_ordered",
     supplierTrackingNumber: null,
@@ -374,6 +427,22 @@ export function updateOrderStatus(id: string, status: string): OrderRow | undefi
     "order_status_changed",
     `Order for ${rows[idx].customerName} marked as ${status}`
   );
+  return rows[idx];
+}
+
+export function updateOrderApproval(
+  id: string,
+  approvalStatus: "approved" | "rejected"
+): OrderRow | undefined {
+  const rows = readJSON<OrderRow[]>(ordersFile);
+  const idx = rows.findIndex((order) => order.id === id);
+  if (idx === -1) return undefined;
+  rows[idx].approvalStatus = approvalStatus;
+  rows[idx].approvedAt = new Date().toISOString();
+  rows[idx].approvedBy = "Store owner";
+  if (approvalStatus === "rejected") rows[idx].status = "cancelled";
+  writeJSON(ordersFile, rows);
+  logActivity(approvalStatus === "approved" ? "order_approved" : "order_rejected", `Order for ${rows[idx].customerName} ${approvalStatus} by owner`);
   return rows[idx];
 }
 
@@ -677,7 +746,8 @@ export type UserRow = {
 export type OtpCodeRow = {
   id: string;
   email: string;
-  code: string;
+  codeHash: string;
+  code?: string;
   used: boolean;
   expiresAt: string;
   createdAt: string;
@@ -745,40 +815,43 @@ export function deleteUserAddress(
 // ---------- OTP codes ----------
 
 function generateOtpCode(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 1000000).toString();
 }
 
-export function createOtpCode(email: string): OtpCodeRow {
+function otpHash(email: string, code: string): string {
+  return crypto.createHash("sha256").update(`${email}:${code}`).digest("hex");
+}
+
+export function createOtpCode(email: string): { email: string; code: string } {
   const rows = readJSON<OtpCodeRow[]>(otpFile);
+  const normalized = email.trim().toLowerCase();
+  const code = generateOtpCode();
   const row: OtpCodeRow = {
     id: uuid(),
-    email: email.trim().toLowerCase(),
-    code: generateOtpCode(),
+    email: normalized,
+    codeHash: otpHash(normalized, code),
     used: false,
-    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 min
+    expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
     createdAt: new Date().toISOString(),
   };
-  // Keep only recent codes for this email to avoid unbounded growth
-  const filtered = rows.filter(
-    (r) => r.email !== row.email || new Date(r.createdAt) > new Date(Date.now() - 60 * 60 * 1000)
-  );
+  const oneHourAgo = Date.now() - 60 * 60 * 1000;
+  const filtered = rows.filter((item) => new Date(item.createdAt).getTime() > oneHourAgo);
   filtered.push(row);
   writeJSON(otpFile, filtered);
-  return row;
+  return { email: normalized, code };
 }
 
 export function verifyOtpCode(email: string, code: string): boolean {
   const rows = readJSON<OtpCodeRow[]>(otpFile);
-  const target = email.trim().toLowerCase();
-  const idx = rows.findIndex(
-    (r) =>
-      r.email === target &&
-      r.code === code.trim() &&
-      !r.used &&
-      new Date(r.expiresAt) > new Date()
-  );
+  const normalized = email.trim().toLowerCase();
+  const hash = otpHash(normalized, code.trim());
+  const idx = rows.findIndex((item) => {
+    const storedHash = item.codeHash || (item.code ? otpHash(item.email, item.code) : "");
+    return item.email === normalized && storedHash === hash && !item.used && new Date(item.expiresAt) > new Date();
+  });
   if (idx === -1) return false;
   rows[idx].used = true;
+  delete rows[idx].code;
   writeJSON(otpFile, rows);
   return true;
 }
@@ -786,7 +859,7 @@ export function verifyOtpCode(email: string, code: string): boolean {
 // ---------- Dashboard stats ----------
 
 export function getDashboardStats() {
-  const products = getAllProducts();
+  const products = getAllProductsAdmin();
   const orders = getAllOrders();
   const suppliers = getAllSuppliers();
 

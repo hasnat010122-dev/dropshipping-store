@@ -132,6 +132,19 @@ export default function AdminProductsPage() {
     setTimeout(() => setMessage(""), 3000);
   }
 
+  async function changePublication(id: string, publicationStatus: "draft" | "approved" | "published") {
+    setMessage("");
+    const res = await fetch(`/api/products/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ publicationStatus }),
+    });
+    const data = await res.json();
+    if (!res.ok) setMessage(data.error || "Publication status could not be changed.");
+    else setMessage(publicationStatus === "published" ? "Product published ✓" : publicationStatus === "approved" ? "Product approved ✓" : "Product moved to draft");
+    await loadAll();
+  }
+
   async function handleDelete(id: string, name: string) {
     if (!confirm(`Remove "${name}" from the store? This can't be undone.`))
       return;
@@ -401,6 +414,15 @@ export default function AdminProductsPage() {
                       OUT OF STOCK
                     </span>
                   )}
+                  <span className={`absolute top-2 right-2 text-[10px] font-tag px-2 py-1 rounded uppercase ${
+                    (p.publicationStatus || "published") === "published"
+                      ? "bg-emerald-500/90 text-white"
+                      : (p.publicationStatus || "published") === "approved"
+                      ? "bg-blue-500/90 text-white"
+                      : "bg-amber-400/90 text-black"
+                  }`}>
+                    {p.publicationStatus || "published"}
+                  </span>
                 </div>
                 <p className="text-white text-sm leading-snug mb-1 truncate">
                   {p.name}
@@ -424,6 +446,23 @@ export default function AdminProductsPage() {
                   >
                     <Trash2 size={12} /> Delete
                   </button>
+                </div>
+                <div className="flex gap-2 mt-2">
+                  {(p.publicationStatus || "published") === "draft" && (
+                    <button onClick={() => changePublication(p.id, "approved")} className="focus-ring flex-1 bg-blue-500/15 border border-blue-400/30 rounded-lg py-2 text-xs text-blue-200 hover:bg-blue-500/25">
+                      Approve product
+                    </button>
+                  )}
+                  {(p.publicationStatus || "published") === "approved" && (
+                    <button onClick={() => changePublication(p.id, "published")} className="focus-ring flex-1 bg-emerald-500/15 border border-emerald-400/30 rounded-lg py-2 text-xs text-emerald-200 hover:bg-emerald-500/25">
+                      Publish to store
+                    </button>
+                  )}
+                  {(p.publicationStatus || "published") === "published" && (
+                    <button onClick={() => changePublication(p.id, "approved")} className="focus-ring flex-1 border border-amber-400/30 rounded-lg py-2 text-xs text-amber-200 hover:bg-amber-500/10">
+                      Unpublish
+                    </button>
+                  )}
                 </div>
               </div>
             );

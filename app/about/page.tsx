@@ -1,12 +1,12 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "About — Zelko" };
+export const metadata = { title: "About — FetchWow" };
 
 export default function AboutPage() {
   return (
-    <InfoPage title="About Zelko">
+    <InfoPage title="About FetchWow">
       <p>
-        Zelko is a store for the things you didn&apos;t know you needed until
+        FetchWow is a store for the things you didn&apos;t know you needed until
         you saw them — curated finds at honest prices, delivered fast across
         Pakistan and shipped worldwide.
       </p>
@@ -17,7 +17,7 @@ export default function AboutPage() {
       </p>
       <p className="text-sm text-ink-soft/60">
         (Store owner: replace this with your own story once you&apos;re ready
-        — a bit about why you started Zelko goes a long way for building
+        — a bit about why you started FetchWow goes a long way for building
         trust with new customers.)
       </p>
     </InfoPage>

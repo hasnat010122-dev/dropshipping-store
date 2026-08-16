@@ -11,7 +11,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { orderId, phone, itemId, itemName, requestType, reason, comments } = body;
+  const { orderId, phone, itemId, requestType, reason, comments } = body;
 
   if (!orderId || !phone || !itemId || !reason) {
     return NextResponse.json(
@@ -30,12 +30,17 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const orderedItem = order.items.find((item) => item.id === itemId);
+  if (!orderedItem) {
+    return NextResponse.json({ error: "That item is not part of this order." }, { status: 400 });
+  }
+
   const created = createReturnRequest({
     orderId: order.id,
     customerName: order.customerName,
     phone: order.phone,
-    itemId,
-    itemName: itemName || "Item",
+    itemId: orderedItem.id,
+    itemName: orderedItem.name,
     requestType: requestType === "exchange" ? "exchange" : "refund",
     reason,
     comments: comments || null,

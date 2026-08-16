@@ -1,84 +1,118 @@
-# Zelko
+# FetchWow Dropshipping Store
 
-A complete online store: storefront, verification-gated checkout, customer
-accounts, and a full admin dashboard for managing products, orders,
-suppliers, discounts, and returns.
+A Next.js 16 storefront for approval-gated, zero-inventory dropshipping in Pakistan. The project includes customer verification, checkout, accounts, owner administration, product approval, order approval, supplier records, coupons, returns and activity history.
 
-**Note:** the brand name lives in one place — `lib/brand.ts`. Change it there
-and it updates everywhere (header, footer, favicon, emails, page titles).
+## Safety model
 
-## Running it locally
+- Browsing is public; checkout requires a verified customer session.
+- Every new product starts as **Draft**, must be **Approved**, and only then can be **Published**.
+- Every order starts **Pending owner approval**. Supplier email/WhatsApp forwarding and fulfillment progression remain disabled until the owner approves it.
+- Prices and item names are recalculated from the server catalog; checkout never trusts browser-submitted prices.
+- Supplier cost, supplier URL and sourcing identifiers are removed from public product APIs.
+- Admin and customer cookies are signed, HTTP-only JWT sessions.
+- No real credential belongs in Git or a `NEXT_PUBLIC_...` variable.
 
-```
+## Local setup
+
+Requirements: Node.js 20.9 or newer.
+
+```bash
 npm install
+cp .env.local.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000 for the store.
+On Windows PowerShell:
 
-## How checkout works
+```powershell
+Copy-Item .env.local.example .env.local
+npm run dev
+```
 
-1. Customer browses and adds items to their cart — no sign-in needed for this.
-2. Clicking **"Proceed to checkout"** checks if they're signed in.
-3. If not, they're sent to verify — either **"Continue with Google"** or
-   **email + a 6-digit code** (no password).
-4. Once verified, they land on the checkout page: delivery address (with
-   saved-address quick-select if they have one), payment method, and order
-   summary — styled like a standard e-commerce checkout.
-5. This is enforced both in the UI and at the server/middleware level, so it
-   can't be bypassed by visiting `/checkout` directly.
+Open `http://localhost:3000`.
 
-Guest *browsing* is fully open — only placing an order requires verification.
+Before using Admin, set strong values in `.env.local`:
 
-## The admin panel
+```env
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+SESSION_SECRET=replace-with-a-long-random-secret
+ADMIN_PASSWORD=replace-with-a-strong-owner-password
+```
 
-Go to **http://localhost:3000/admin** — default password `buyzo123` (change
-this via `.env.local` before deploying).
+Generate a session secret locally:
 
-- **Dashboard** — revenue chart, orders, low stock, pending returns, recent activity
-- **Products** — add/edit/delete, link to a supplier, upload photos
-- **Orders** — status tracking + supplier fulfillment tracking (tracking numbers, links)
-- **Discounts** — create coupon codes (percentage or fixed amount off)
-- **Returns** — customer-submitted return/exchange requests
-- **Suppliers** — your sourcing contacts and platforms
-- **Activity Log** — everything that's happened on the store
+```bash
+node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
+```
 
-## Customer accounts
+Admin is at `http://localhost:3000/admin`. There is no committed or fallback production password.
 
-`/account` — order history and saved addresses. Sign-in is via Google OAuth
-or email OTP (see `.env.local.example` for setup — Google needs your own
-OAuth credentials; email OTP works out of the box in dev mode, showing the
-code directly on screen until you configure real email sending).
+## Email and Google sign-in
 
-## How data is stored
+Developer-side support is already implemented. See [`SETUP-INTEGRATIONS.md`](./SETUP-INTEGRATIONS.md) for the owner steps.
 
-Everything (products, orders, users, coupons, suppliers, returns, activity)
-lives in JSON files under `data/` — no database server needed. This folder
-is excluded from git. Back it up periodically once you have real data in it.
+Exact local Google callback:
 
-## Payments
+```text
+http://localhost:3000/api/auth/google/callback
+```
 
-Checkout collects the customer's chosen method (JazzCash/Easypaisa/SadaPay/
-NayaPay/Cash on Delivery) but doesn't charge them yet — that requires signing
-up as a merchant with each provider and wiring in their API. Ask when you're
-ready to add real payment processing.
+Environment variables:
 
-## Deploying it live
+```env
+RESEND_API_KEY=
+ORDER_EMAIL_FROM=FetchWow Orders <orders@send.fetchwow.online>
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+```
 
-This is a Next.js app — deploys cleanly to Vercel. Before deploying:
-1. Set `ADMIN_PASSWORD` and `SESSION_SECRET` to real random values
-2. Set `NEXT_PUBLIC_SITE_URL` to your real domain
-3. Move from local JSON storage to a hosted database (e.g. Neon/Supabase) —
-   local files don't persist on serverless hosts
-4. If using Google sign-in, add the production redirect URI in Google Cloud Console
+When Resend is not configured in local development, the OTP appears on the verification screen. Production never returns the OTP code in an API response.
+
+## Approval workflow
+
+### Products
+
+1. Admin adds a product; it is stored as **Draft** and is absent from the public store.
+2. Admin reviews sourcing, price and content, then selects **Approve product**.
+3. Admin selects **Publish to store** as a separate action.
+4. A published product can be unpublished without deleting its history.
+
+### Orders
+
+1. A verified customer places an order; its status is **Pending owner approval**.
+2. Owner reviews customer, product, payment and supplier information.
+3. Owner selects **Approve order** or **Reject**.
+4. Supplier email, WhatsApp and fulfillment controls become available only after approval.
+5. No Markaz order is submitted automatically. Markaz automation remains out of scope until the custom store is complete and you approve that next phase.
+
+## Validation
+
+```bash
+npm run lint
+npm test
+npm run build
+```
+
+Or run everything:
+
+```bash
+npm run check
+```
+
+## Local data warning
+
+Development data is stored in JSON files under `data/`; this folder is excluded from Git. It is suitable for local development but **not for production on Vercel**, because serverless files are not durable shared storage. Before live deployment, migrate products, orders, users, OTP records, coupons, suppliers, returns and activity to a hosted database such as PostgreSQL.
+
+The current upload route writes to `public/uploads/` locally. Production deployment also requires durable object storage for product images.
 
 ## Project structure
 
-- `app/` — every page (storefront, checkout, account, admin)
-- `app/api/` — backend routes
-- `lib/db.ts` — the data layer
-- `lib/brand.ts` — brand name/tagline — the one place to rename the store
-- `lib/session.ts` — customer login sessions
-- `lib/auth.ts` — admin login
-- `context/` — cart and currency state
-- `components/` — reusable UI pieces
+- `app/` — storefront, account, checkout and Admin pages
+- `app/api/` — protected API routes
+- `components/` — reusable UI components
+- `context/` — cart and display-currency state
+- `lib/db.ts` — local development data layer
+- `lib/auth.ts` / `lib/session.ts` — signed sessions
+- `lib/email.ts` — server-side Resend integration
+- `lib/security.ts` — validation, cookie and escaping helpers
+- `tests/` — security and integration regression tests

@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
         className="bg-[#12121C] border border-white/[0.08] w-full max-w-sm p-8 rounded-2xl shadow-2xl"
       >
         <p className="font-display text-2xl text-white mb-1">
-          Zelko<span className="text-coral">.</span>
+          FetchWow<span className="text-coral">.</span>
         </p>
         <p className="text-sm text-white/40 mb-6">
           Owner login — enter your password to manage the store.

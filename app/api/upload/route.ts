@@ -22,9 +22,13 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   }
+  if (file.size > 5 * 1024 * 1024) {
+    return NextResponse.json({ error: "Image must be 5 MB or smaller" }, { status: 413 });
+  }
 
   const bytes = Buffer.from(await file.arrayBuffer());
-  const ext = file.type.split("/")[1];
+  const extensions: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp", "image/gif": "gif" };
+  const ext = extensions[file.type];
   const filename = `${uuid()}.${ext}`;
   const uploadDir = path.join(process.cwd(), "public", "uploads");
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });

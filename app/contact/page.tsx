@@ -1,7 +1,7 @@
 import { MessageCircle, Mail } from "lucide-react";
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "Contact Us — Zelko" };
+export const metadata = { title: "Contact Us — FetchWow" };
 
 export default function ContactPage() {
   const whatsapp = process.env.NEXT_PUBLIC_STORE_WHATSAPP || "";
