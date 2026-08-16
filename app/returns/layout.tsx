@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Returns & Refunds — Zelko",
+  title: "Returns & Refunds — FetchWow",
   description:
-    "Start a return or exchange on your Zelko order — 7-day return window, simple online request.",
+    "Start a return or exchange on your FetchWow order — 7-day return window, simple online request.",
 };
 
 export default function ReturnsLayout({
