@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --ink: #14141c;
+  --ink-soft: #23232f;
+  --paper: #fbfaf7;
+  --paper-dim: #f0eee8;
+  --coral: #ff4b5c;
+  --coral-dim: #e63e4e;
+  --marigold: #ffb238;
+  --line: #e4e1d8;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-paper: var(--paper);
+  --color-paper-dim: var(--paper-dim);
+  --color-coral: var(--coral);
+  --color-coral-dim: var(--coral-dim);
+  --color-marigold: var(--marigold);
+  --color-line: var(--line);
+  --font-display: "Avenir Next", "Century Gothic", "Segoe UI", system-ui, sans-serif;
+  --font-body: -apple-system, "Segoe UI", Roboto, system-ui, sans-serif;
+  --font-tag: "SF Mono", "Consolas", "Menlo", monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Torn price-tag notch — signature card shape */
+.tag-card {
+  position: relative;
+}
+
+.tag-notch {
+  position: absolute;
+  top: -1px;
+  left: 18px;
+  width: 14px;
+  height: 14px;
+  background: var(--paper);
+  border-radius: 50%;
+  border-bottom: 1px solid var(--line);
+  z-index: 2;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
