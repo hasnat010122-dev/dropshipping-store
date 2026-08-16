@@ -1,6 +1,6 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "Terms of Service — Zelko" };
+export const metadata = { title: "Terms of Service — FetchWow" };
 
 export default function TermsPage() {
   return (
@@ -14,7 +14,7 @@ export default function TermsPage() {
 
       <h2>Using our store</h2>
       <p>
-        By placing an order on Zelko, you agree to provide accurate delivery
+        By placing an order on FetchWow, you agree to provide accurate delivery
         and contact information, and to pay the listed price (plus any
         delivery fees shown at checkout) for the items you order.
       </p>
@@ -42,7 +42,7 @@ export default function TermsPage() {
 
       <h2>Limitation of liability</h2>
       <p>
-        Zelko is not liable for indirect or incidental damages arising from
+        FetchWow is not liable for indirect or incidental damages arising from
         the use of products purchased through the store, beyond the value of
         the order itself.
       </p>
