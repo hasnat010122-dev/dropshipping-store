@@ -15,14 +15,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const product = getProductById(id);
-  if (!product) return { title: "Product not found — Zelko" };
+  if (!product) return { title: "Product not found — FetchWow" };
 
   const description =
     product.description ||
-    `${product.name} — Rs ${product.price.toLocaleString()} at Zelko. Fast delivery across Pakistan, worldwide shipping.`;
+    `${product.name} — Rs ${product.price.toLocaleString()} at FetchWow. Fast delivery across Pakistan, worldwide shipping.`;
 
   return {
-    title: `${product.name} — Zelko`,
+    title: `${product.name} — FetchWow`,
     description,
     openGraph: {
       title: product.name,
