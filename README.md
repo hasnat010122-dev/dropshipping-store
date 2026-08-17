@@ -99,11 +99,13 @@ Or run everything:
 npm run check
 ```
 
-## Local data warning
+## Database and image storage
 
-Development data is stored in JSON files under `data/`; this folder is excluded from Git. It is suitable for local development but **not for production on Vercel**, because serverless files are not durable shared storage. Before live deployment, migrate products, orders, users, OTP records, coupons, suppliers, returns and activity to a hosted database such as PostgreSQL.
+Without Supabase credentials, local development continues to use JSON files under `data/` and local `public/uploads/`; both folders are excluded from Git.
 
-The current upload route writes to `public/uploads/` locally. Production deployment also requires durable object storage for product images.
+When `SUPABASE_URL` and `SUPABASE_SECRET_KEY` are configured, the same application automatically uses Supabase PostgreSQL for products, orders, users, OTP records, coupons, suppliers, returns and activity. Product uploads automatically use the `product-images` Supabase Storage bucket.
+
+Run `supabase/schema.sql` once in the Supabase SQL Editor before enabling these variables. The schema enables Row Level Security on every store table and grants no browser table policies; all access remains behind validated Next.js server routes. Never expose the Supabase secret key through a `NEXT_PUBLIC_...` variable.
 
 ## Project structure
 

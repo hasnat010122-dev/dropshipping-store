@@ -10,7 +10,7 @@ export async function GET(
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const { id } = await params;
-  const row = getReturnRequestById(id);
+  const row = await getReturnRequestById(id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(row);
 }
@@ -24,7 +24,7 @@ export async function PATCH(
   }
   const { id } = await params;
   const { status } = await req.json();
-  const updated = updateReturnRequestStatus(id, status);
+  const updated = await updateReturnRequestStatus(id, status);
   if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated);
 }

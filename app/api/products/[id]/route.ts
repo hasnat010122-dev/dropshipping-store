@@ -8,7 +8,7 @@ export async function GET(
 ) {
   const { id } = await params;
   const admin = await isAdmin();
-  const row = admin ? getProductByIdAdmin(id) : getProductById(id);
+  const row = admin ? await getProductByIdAdmin(id) : await getProductById(id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(admin ? row : toPublicProduct(row));
 }
@@ -36,10 +36,10 @@ export async function PUT(
     supplierCost,
   } = body;
 
-  const existing = getProductByIdAdmin(id);
+  const existing = await getProductByIdAdmin(id);
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const updated = updateProduct(id, {
+  const updated = await updateProduct(id, {
     name,
     price: Math.round(Number(price)),
     compareAt: compareAt ? Math.round(Number(compareAt)) : null,
@@ -62,7 +62,7 @@ export async function PATCH(
 ) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   const { id } = await params;
-  const product = getProductByIdAdmin(id);
+  const product = await getProductByIdAdmin(id);
   if (!product) return NextResponse.json({ error: "Not found" }, { status: 404 });
   const { publicationStatus } = await req.json();
   if (!["draft", "approved", "published"].includes(publicationStatus)) {
@@ -72,7 +72,7 @@ export async function PATCH(
   if (publicationStatus === "published" && current !== "approved") {
     return NextResponse.json({ error: "Approve the product before publishing it." }, { status: 409 });
   }
-  return NextResponse.json(updateProductPublicationStatus(id, publicationStatus));
+  return NextResponse.json(await updateProductPublicationStatus(id, publicationStatus));
 }
 
 export async function DELETE(
@@ -83,6 +83,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const { id } = await params;
-  deleteProduct(id);
+  await deleteProduct(id);
   return NextResponse.json({ ok: true });
 }

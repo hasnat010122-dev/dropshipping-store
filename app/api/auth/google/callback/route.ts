@@ -29,8 +29,15 @@ export async function GET(req: NextRequest) {
       body: new URLSearchParams({ code, client_id: clientId, client_secret: clientSecret, redirect_uri: redirectUri, grant_type: "authorization_code" }),
       cache: "no-store",
     });
-    if (!tokenRes.ok) throw new Error("Google token exchange failed");
     const tokenData = await tokenRes.json();
+    if (!tokenRes.ok) {
+      console.error("Google token exchange rejected", {
+        status: tokenRes.status,
+        error: tokenData.error,
+        errorDescription: tokenData.error_description,
+      });
+      throw new Error("Google token exchange failed");
+    }
     if (!tokenData.access_token) throw new Error("Google returned no access token");
 
     const profileRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
@@ -41,7 +48,7 @@ export async function GET(req: NextRequest) {
     const profile = await profileRes.json();
     if (!profile.email || profile.email_verified !== true) throw new Error("Google email is unavailable or unverified");
 
-    const user = findOrCreateUser(profile.email, profile.name || profile.email.split("@")[0], "google");
+    const user = await findOrCreateUser(profile.email, profile.name || profile.email.split("@")[0], "google");
     await createSession(user.id);
     const returnTo = safeInternalPath(req.cookies.get("fetchwow_oauth_returnto")?.value, "/account");
     const response = NextResponse.redirect(new URL(returnTo, req.nextUrl.origin));

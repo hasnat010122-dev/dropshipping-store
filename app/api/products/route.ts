@@ -4,7 +4,7 @@ import { isAdmin } from "@/lib/auth";
 
 export async function GET() {
   const admin = await isAdmin();
-  const rows = admin ? getAllProductsAdmin() : getAllProducts();
+  const rows = admin ? await getAllProductsAdmin() : await getAllProducts();
   return NextResponse.json(admin ? rows : rows.map(toPublicProduct));
 }
 
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const created = createProduct({
+  const created = await createProduct({
     name,
     price: Math.round(Number(price)),
     compareAt: compareAt ? Math.round(Number(compareAt)) : null,

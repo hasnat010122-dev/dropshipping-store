@@ -6,8 +6,8 @@ import { getAllProducts } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 
-export default function Home() {
-  const products = getAllProducts();
+export default async function Home() {
+  const products = await getAllProducts();
   return (
     <>
       <Header />

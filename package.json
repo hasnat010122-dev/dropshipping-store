@@ -1,6 +1,6 @@
 {
   "name": "fetchwow-dropshipping-store",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Approval-gated zero-inventory dropshipping storefront for Pakistan",
   "scripts": {
@@ -23,6 +23,7 @@
     "react-dom": "19.2.8",
     "recharts": "^3.10.1",
     "resend": "^6.20.0",
+    "@supabase/supabase-js": "2.100.0",
     "uuid": "^14.0.1"
   },
   "devDependencies": {

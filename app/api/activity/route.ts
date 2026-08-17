@@ -7,5 +7,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const limit = Number(req.nextUrl.searchParams.get("limit") || "50");
-  return NextResponse.json(getRecentActivity(limit));
+  return NextResponse.json(await getRecentActivity(limit));
 }

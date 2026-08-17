@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Wrong password" }, { status: 401 });
   }
   await createAdminSession();
-  logActivity("admin_login", "Admin logged in");
+  await logActivity("admin_login", "Admin logged in");
   return NextResponse.json({ ok: true });
 }
 

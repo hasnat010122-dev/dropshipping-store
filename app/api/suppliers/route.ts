@@ -6,7 +6,7 @@ export async function GET() {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
-  return NextResponse.json(getAllSuppliers());
+  return NextResponse.json(await getAllSuppliers());
 }
 
 export async function POST(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const created = createSupplier({
+  const created = await createSupplier({
     name,
     platform,
     contactName: contactName || null,

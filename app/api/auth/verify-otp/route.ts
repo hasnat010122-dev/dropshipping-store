@@ -18,11 +18,11 @@ export async function POST(req: NextRequest) {
       { status: 429, headers: { "Retry-After": String(rate.retryAfter) } }
     );
   }
-  if (!verifyOtpCode(email, String(code))) {
+  if (!await verifyOtpCode(email, String(code))) {
     return NextResponse.json({ error: "That code is incorrect or has expired." }, { status: 400 });
   }
 
-  const user = findOrCreateUser(email, String(name || email.split("@")[0]).slice(0, 100), "email");
+  const user = await findOrCreateUser(email, String(name || email.split("@")[0]).slice(0, 100), "email");
   await createSession(user.id);
   return NextResponse.json({ ok: true, user: { id: user.id, name: user.name, email: user.email } });
 }

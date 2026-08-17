@@ -6,7 +6,7 @@ export async function GET() {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ user: null });
 
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
   if (!user) {
     // The session token is validly signed but points at a user that no
     // longer exists (e.g. the underlying data was reset). Clear it so the

@@ -13,7 +13,7 @@ export async function PUT(
   const body = await req.json();
   const { code, type, value, active, usageLimit, expiresAt } = body;
 
-  const updated = updateCoupon(id, {
+  const updated = await updateCoupon(id, {
     code,
     type: type === "fixed" ? "fixed" : "percent",
     value: Number(value),
@@ -34,6 +34,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const { id } = await params;
-  deleteCoupon(id);
+  await deleteCoupon(id);
   return NextResponse.json({ ok: true });
 }

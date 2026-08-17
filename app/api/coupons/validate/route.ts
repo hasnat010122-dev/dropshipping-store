@@ -6,7 +6,7 @@ export async function POST(req: NextRequest) {
   if (!code || typeof subtotal !== "number") {
     return NextResponse.json({ error: "Missing code or subtotal" }, { status: 400 });
   }
-  const result = validateCoupon(code, subtotal);
+  const result = await validateCoupon(code, subtotal);
   if (!result.valid) {
     return NextResponse.json({ error: result.error }, { status: 400 });
   }

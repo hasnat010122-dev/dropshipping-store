@@ -6,7 +6,7 @@ export async function GET() {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
-  return NextResponse.json(getAllReturnRequests());
+  return NextResponse.json(await getAllReturnRequests());
 }
 
 export async function POST(req: NextRequest) {
@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Verify the order actually exists and the phone matches, same check used for tracking
-  const order = getOrderById(orderId.trim());
+  const order = await getOrderById(orderId.trim());
   const normalize = (p: string) => p.replace(/[^\d]/g, "").slice(-10);
   if (!order || normalize(order.phone) !== normalize(phone)) {
     return NextResponse.json(
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "That item is not part of this order." }, { status: 400 });
   }
 
-  const created = createReturnRequest({
+  const created = await createReturnRequest({
     orderId: order.id,
     customerName: order.customerName,
     phone: order.phone,

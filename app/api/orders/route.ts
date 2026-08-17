@@ -9,12 +9,12 @@ const PAYMENT_METHODS = new Set(["jazzcash", "easypaisa", "sadapay", "nayapay", 
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Not allowed" }, { status: 401 });
-  return NextResponse.json(getAllOrders());
+  return NextResponse.json(await getAllOrders());
 }
 
 export async function POST(req: NextRequest) {
   const userId = await getSessionUserId();
-  const user = userId ? getUserById(userId) : undefined;
+  const user = userId ? await getUserById(userId) : undefined;
   if (!userId || !user) {
     return NextResponse.json({ error: "Please verify your account before placing an order." }, { status: 401 });
   }
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
   const serverItems: OrderItem[] = [];
   for (const [id, qty] of quantities) {
-    const product = getProductById(id);
+    const product = await getProductById(id);
     if (!product) return NextResponse.json({ error: "A product in your cart is no longer available." }, { status: 409 });
     if (product.stock < qty) return NextResponse.json({ error: `Only ${product.stock} units of ${product.name} are currently available.` }, { status: 409 });
     serverItems.push({ id: product.id, name: product.name, price: product.price, qty });
@@ -53,13 +53,13 @@ export async function POST(req: NextRequest) {
   let appliedCode: string | null = null;
   const couponCode = cleanText(body.couponCode, 50);
   if (couponCode) {
-    const result = validateCoupon(couponCode, subtotal);
+    const result = await validateCoupon(couponCode, subtotal);
     if (!result.valid) return NextResponse.json({ error: result.error }, { status: 400 });
     discount = result.discount;
     appliedCode = result.coupon.code;
   }
 
-  const order = createOrder({
+  const order = await createOrder({
     userId,
     customerName,
     phone,
@@ -75,8 +75,8 @@ export async function POST(req: NextRequest) {
   });
 
   if (appliedCode) {
-    const coupon = getCouponByCode(appliedCode);
-    if (coupon) incrementCouponUsage(coupon.id);
+    const coupon = await getCouponByCode(appliedCode);
+    if (coupon) await incrementCouponUsage(coupon.id);
   }
   sendOrderConfirmationEmail(order).catch((error) => console.error("Order confirmation email failed", error));
   return NextResponse.json({ id: order.id, total: order.total }, { status: 201 });

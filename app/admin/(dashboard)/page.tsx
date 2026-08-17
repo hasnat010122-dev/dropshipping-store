@@ -42,9 +42,8 @@ function timeAgo(iso: string) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-export default function AdminDashboardPage() {
-  const stats = getDashboardStats();
-  const activity = getRecentActivity(8);
+export default async function AdminDashboardPage() {
+  const [stats, activity] = await Promise.all([getDashboardStats(), getRecentActivity(8)]);
 
   const cards = [
     {

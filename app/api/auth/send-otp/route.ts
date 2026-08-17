@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const otp = createOtpCode(email);
+  const otp = await createOtpCode(email);
   try {
     const sent = await sendOtpEmail(otp.email, otp.code);
     if (!sent && process.env.NODE_ENV === "production") {

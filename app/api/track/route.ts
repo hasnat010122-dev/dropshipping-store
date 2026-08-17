@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const order = getOrderById(orderId.trim());
+  const order = await getOrderById(orderId.trim());
 
   const normalize = (p: string) => p.replace(/[^\d]/g, "").slice(-10);
 

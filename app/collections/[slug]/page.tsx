@@ -25,7 +25,7 @@ export default async function CollectionPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const products = getProductsForCollection(slug);
+  const products = await getProductsForCollection(slug);
   const title = getCollectionTitle(slug);
 
   return (

@@ -20,8 +20,8 @@ const activityIcons: Record<string, string> = {
   coupon_deleted: "🏷️",
 };
 
-export default function AdminActivityPage() {
-  const activity = getRecentActivity(200);
+export default async function AdminActivityPage() {
+  const activity = await getRecentActivity(200);
 
   return (
     <div>

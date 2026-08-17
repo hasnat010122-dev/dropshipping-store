@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
   }
 
-  const user = addUserAddress(userId, {
+  const user = await addUserAddress(userId, {
     label: label || "Home",
     address,
     city,

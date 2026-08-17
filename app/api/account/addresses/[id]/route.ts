@@ -10,7 +10,7 @@ export async function DELETE(
   if (!userId) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
   const { id } = await params;
-  const user = deleteUserAddress(userId, id);
+  const user = await deleteUserAddress(userId, id);
   if (!user) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(user.addresses);
 }

@@ -10,7 +10,7 @@ export async function GET(
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const { id } = await params;
-  const row = getSupplierById(id);
+  const row = await getSupplierById(id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(row);
 }
@@ -26,7 +26,7 @@ export async function PUT(
   const body = await req.json();
   const { name, platform, contactName, phone, email, website, notes } = body;
 
-  const updated = updateSupplier(id, {
+  const updated = await updateSupplier(id, {
     name,
     platform,
     contactName: contactName || null,
@@ -48,6 +48,6 @@ export async function DELETE(
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
   const { id } = await params;
-  deleteSupplier(id);
+  await deleteSupplier(id);
   return NextResponse.json({ ok: true });
 }

@@ -14,7 +14,7 @@ export default async function OrderConfirmationPage({
 }) {
   const { id } = await params;
   const userId = await getSessionUserId();
-  const order = getOrderById(id);
+  const order = await getOrderById(id);
   if (!order || !userId || order.userId !== userId) notFound();
 
   const items = order.items;

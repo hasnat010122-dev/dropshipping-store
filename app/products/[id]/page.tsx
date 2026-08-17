@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
   if (!product) return { title: "Product not found — FetchWow" };
 
   const description =
@@ -45,10 +45,10 @@ export default async function ProductPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const product = getProductById(id);
+  const product = await getProductById(id);
   if (!product) notFound();
 
-  const related = getProductsByCategory(product.category, product.id, 4);
+  const related = await getProductsByCategory(product.category, product.id, 4);
 
   const discount =
     product.compareAt && product.compareAt > product.price

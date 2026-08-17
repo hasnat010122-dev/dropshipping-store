@@ -6,5 +6,5 @@ export async function GET() {
   const userId = await getSessionUserId();
   if (!userId) return NextResponse.json({ error: "Not signed in" }, { status: 401 });
 
-  return NextResponse.json(getOrdersByUserId(userId).map(toCustomerOrder));
+  return NextResponse.json((await getOrdersByUserId(userId)).map(toCustomerOrder));
 }

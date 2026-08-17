@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;
-  const row = getOrderById(id);
+  const row = await getOrderById(id);
   if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
   if (await isAdmin()) return NextResponse.json(row);
   const userId = await getSessionUserId();
@@ -32,14 +32,14 @@ export async function PATCH(
     if (!["approved", "rejected"].includes(body.approvalStatus)) {
       return NextResponse.json({ error: "Invalid approval status" }, { status: 400 });
     }
-    updateOrderApproval(id, body.approvalStatus);
+    await updateOrderApproval(id, body.approvalStatus);
   }
   if (body.status) {
     if (!orderStatuses.has(body.status)) return NextResponse.json({ error: "Invalid order status" }, { status: 400 });
-    updateOrderStatus(id, body.status);
+    await updateOrderStatus(id, body.status);
   }
 
-  const current = getOrderById(id);
+  const current = await getOrderById(id);
   if (body.fulfillmentStatus && !fulfillmentStatuses.has(body.fulfillmentStatus)) {
     return NextResponse.json({ error: "Invalid fulfillment status" }, { status: 400 });
   }
@@ -50,9 +50,9 @@ export async function PATCH(
   const fulfillmentKeys = ["supplierId", "fulfillmentStatus", "supplierTrackingNumber", "supplierTrackingUrl", "fulfillmentNotes"];
   const fulfillmentUpdate: Record<string, unknown> = {};
   for (const key of fulfillmentKeys) if (key in body) fulfillmentUpdate[key] = body[key];
-  if (Object.keys(fulfillmentUpdate).length > 0) updateOrderFulfillment(id, fulfillmentUpdate);
+  if (Object.keys(fulfillmentUpdate).length > 0) await updateOrderFulfillment(id, fulfillmentUpdate);
 
-  const updated = getOrderById(id);
+  const updated = await getOrderById(id);
   if (!updated) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated);
 }

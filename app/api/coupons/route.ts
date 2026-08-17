@@ -6,7 +6,7 @@ export async function GET() {
   if (!(await isAdmin())) {
     return NextResponse.json({ error: "Not allowed" }, { status: 401 });
   }
-  return NextResponse.json(getAllCoupons());
+  return NextResponse.json(await getAllCoupons());
 }
 
 export async function POST(req: NextRequest) {
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const created = createCoupon({
+  const created = await createCoupon({
     code,
     type: type === "fixed" ? "fixed" : "percent",
     value: Number(value),
