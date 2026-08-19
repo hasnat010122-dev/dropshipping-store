@@ -23,7 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const collectionSlugs = [
     "new-in",
     "trending-now",
-    "under-rs-1500",
     "gift-ideas",
     "tech",
     "home",

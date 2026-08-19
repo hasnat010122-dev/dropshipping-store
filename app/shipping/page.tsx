@@ -13,8 +13,8 @@ export default function ShippingPage() {
 
       <h2>Delivery times</h2>
       <ul>
-        <li>Within Pakistan: 2–4 business days after your order is confirmed</li>
-        <li>International orders: 7–14 business days, depending on destination</li>
+        <li>We deliver orders to destinations all over the world</li>
+        <li>Estimated delivery time depends on the destination and supplier</li>
         <li>
           Delivery times may be longer during sales, public holidays, or for
           items sourced directly from our suppliers
@@ -23,7 +23,7 @@ export default function ShippingPage() {
 
       <h2>Shipping costs</h2>
       <p>
-        Delivery cost is calculated at checkout based on your city and order
+        Delivery cost is calculated at checkout based on your destination and order
         size. We&apos;ll always show you the total before you confirm your
         order — no surprise charges.
       </p>

@@ -79,8 +79,8 @@ export default function ProductHero({
         <AddToCartBox product={product} />
 
         <div className="border-t border-line pt-6 space-y-3 text-sm font-body text-ink-soft">
-          <p>🚚 Delivered in 2–4 days across Pakistan, 7–14 days worldwide</p>
-          <p>💳 Pay by Cash on Delivery or Meezan Bank transfer</p>
+          <p>🚚 Worldwide delivery available</p>
+          <p>💳 Pay securely by bank account transfer</p>
           <p>↩︎ 7-day return window, no questions asked</p>
         </div>
       </motion.div>

@@ -4,8 +4,8 @@ import InfoPage from "@/components/InfoPage";
 export const metadata = { title: "Contact Us — FetchWow" };
 
 export default function ContactPage() {
-  const whatsapp = process.env.NEXT_PUBLIC_STORE_WHATSAPP || "";
-  const email = process.env.NEXT_PUBLIC_STORE_EMAIL || "";
+  const whatsapp = process.env.NEXT_PUBLIC_STORE_WHATSAPP || "03086177169";
+  const email = process.env.NEXT_PUBLIC_STORE_EMAIL || "fetchwow1@gmail.com";
 
   return (
     <InfoPage title="Contact Us">
@@ -17,7 +17,7 @@ export default function ContactPage() {
       <div className="not-prose grid sm:grid-cols-2 gap-4 mt-8">
         {whatsapp ? (
           <a
-            href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`}
+            href={`https://wa.me/${whatsapp.replace(/[^\d]/g, "").replace(/^0/, "92")}`}
             target="_blank"
             rel="noopener noreferrer"
             className="focus-ring flex items-center gap-3 border border-line bg-white p-5 hover:border-coral transition-colors"
@@ -26,7 +26,7 @@ export default function ContactPage() {
               <MessageCircle size={18} className="text-emerald-600" />
             </span>
             <span>
-              <span className="block font-display text-ink">WhatsApp</span>
+              <span className="block font-display text-ink">Phone / WhatsApp</span>
               <span className="text-sm text-ink-soft font-body">{whatsapp}</span>
             </span>
           </a>

@@ -535,8 +535,6 @@ export function getProductsForCollection(slug: string): ProductRow[] {
       return all.slice(0, 12);
     case "trending-now":
       return all.filter((p) => p.badge === "Trending");
-    case "under-rs-1500":
-      return all.filter((p) => p.price <= 1500);
     case "gift-ideas":
       return all.filter((p) => p.badge === "New" || p.badge === "Trending");
     default: {
@@ -551,7 +549,6 @@ export function getCollectionTitle(slug: string): string {
   const titles: Record<string, string> = {
     "new-in": "New In",
     "trending-now": "Trending Now",
-    "under-rs-1500": "Under Rs 1500",
     "gift-ideas": "Gift Ideas",
   };
   if (titles[slug]) return titles[slug];

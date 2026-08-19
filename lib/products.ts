@@ -89,7 +89,6 @@ export const categories = [
   "Tech",
   "Home",
   "Fashion",
-  "Under Rs 1500",
   "Trending Now",
   "Gift Ideas",
 ];

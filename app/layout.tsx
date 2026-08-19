@@ -13,7 +13,7 @@ export const metadata: Metadata = {
     template: "%s",
   },
   description:
-    "FetchWow is a store for the things you didn't know you needed until you saw them. Fast local delivery in Pakistan, worldwide shipping everywhere else.",
+    "FetchWow is a store for the things you didn't know you needed until you saw them. Worldwide delivery for great finds at everyday prices.",
   openGraph: {
     siteName: "FetchWow",
     type: "website",

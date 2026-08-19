@@ -18,10 +18,10 @@ export default async function Home() {
         {/* Trust strip */}
         <section className="border-b border-line bg-paper-dim">
           <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex flex-wrap gap-x-10 gap-y-2 justify-center sm:justify-between text-sm font-tag text-ink-soft">
-            <span>🚚 Fast delivery, nationwide</span>
-            <span>💳 Cash on Delivery · Meezan Bank transfer</span>
+            <span>🚚 Worldwide delivery</span>
+            <span>💳 Secure bank account transfer</span>
             <span>↩︎ 7-day easy returns</span>
-            <span>🌍 We ship worldwide</span>
+            <span>🌍 Order from anywhere</span>
           </div>
         </section>
 

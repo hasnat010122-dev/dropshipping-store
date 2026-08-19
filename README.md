@@ -1,6 +1,6 @@
 # FetchWow Dropshipping Store
 
-A Next.js 16 storefront for approval-gated, zero-inventory dropshipping in Pakistan. The project includes customer verification, checkout, accounts, owner administration, product approval, order approval, supplier records, coupons, returns and activity history.
+A Next.js 16 storefront for approval-gated, zero-inventory worldwide dropshipping. The project includes customer verification, checkout, accounts, owner administration, product approval, order approval, supplier records, coupons, returns and activity history.
 
 ## Safety model
 

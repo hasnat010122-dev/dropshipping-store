@@ -61,8 +61,8 @@ export default function AnimatedHero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-6 max-w-lg text-ink-soft font-body text-lg"
         >
-          Curated finds, honest prices. Delivered fast across Pakistan —
-          shipped worldwide.
+          Curated finds, honest prices. Delivered to customers all over the
+          world.
         </motion.p>
 
         <motion.div

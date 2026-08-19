@@ -1,36 +1,18 @@
-# FetchWow bank-payment update
+# FetchWow worldwide single-account update
 
-This update keeps only these checkout methods:
+This cumulative update includes all requested changes:
 
-1. Cash on Delivery
-2. Meezan Bank transfer
+- Removes Cash on Delivery and all wallet options.
+- Keeps only manual bank-account transfer.
+- Displays only account number `00300114982252` (no bank name, title, or IBAN).
+- Adds Phone / WhatsApp `03086177169` and email `fetchwow1@gmail.com`.
+- Replaces Pakistan-only delivery wording with worldwide-delivery wording throughout the customer-facing store.
+- Removes the `Under Rs 1500` navigation option, collection handling, and sitemap entry.
 
-It removes JazzCash, Easypaisa, SadaPay and NayaPay from checkout and store messaging. For a bank-transfer order, the checkout and confirmation page show the receiving account. The customer is instructed to transfer the exact order total, use the short order ID as the payment reference, and keep the receipt. The order remains pending for manual confirmation.
+## Install
 
-## Changed files
+Copy every source file in this package into the same path in the GitHub repository. Commit the files to the `main` branch. Vercel should deploy the commit automatically.
 
-Copy these files into the same paths in the GitHub repository:
+After Vercel reports Ready, verify the homepage, navigation, product page, Shipping page, Contact page, checkout, and one test order.
 
-- `app/page.tsx`
-- `app/checkout/page.tsx`
-- `app/api/orders/route.ts`
-- `app/order-confirmation/[id]/page.tsx`
-- `components/Footer.tsx`
-- `components/ProductHero.tsx`
-- `lib/email.ts`
-- `lib/payment.ts` (new)
-
-Commit the files to the `main` branch. Vercel should deploy the GitHub commit automatically.
-
-## Verification
-
-After Vercel reports Ready:
-
-1. Add a product to the cart.
-2. Open checkout.
-3. Confirm only Cash on Delivery and Meezan Bank transfer appear.
-4. Select bank transfer and confirm the account details appear.
-5. Place a small test order and verify the order-confirmation page shows the exact total and short order ID.
-6. Confirm the order appears as pending in Admin before manually approving it.
-
-The project passed ESLint, all 15 automated tests, TypeScript checking, and a full Next.js production build before packaging.
+This version passed ESLint, all 15 tests, TypeScript validation, and a full Next.js production build.

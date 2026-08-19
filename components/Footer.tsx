@@ -40,12 +40,15 @@ export default function Footer() {
             {BRAND.name}<span className="text-coral">.</span>
           </p>
           <p className="text-sm text-paper/60 max-w-xs font-body">
-            Great finds, everyday prices. Fast delivery across Pakistan,
-            worldwide shipping everywhere else.
+            Great finds, everyday prices. Delivered to customers all over the
+            world.
           </p>
           <div className="flex gap-3 mt-5 font-tag text-xs flex-wrap">
-            <span className="border border-paper/20 px-2 py-1">Cash on Delivery</span>
-            <span className="border border-paper/20 px-2 py-1">Meezan Bank</span>
+            <span className="border border-paper/20 px-2 py-1">Bank account transfer</span>
+          </div>
+          <div className="mt-4 space-y-1 text-xs text-paper/60 font-body">
+            <p>Phone / WhatsApp: <a className="hover:text-marigold" href="https://wa.me/923086177169">03086177169</a></p>
+            <p>Email: <a className="hover:text-marigold" href="mailto:fetchwow1@gmail.com">fetchwow1@gmail.com</a></p>
           </div>
         </div>
 

@@ -122,7 +122,7 @@ export async function deleteProduct(id: string) {
 export async function searchProducts(query: string) { const q = query.trim().toLowerCase(); return q ? (await getAllProducts()).filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.description || "").toLowerCase().includes(q)) : []; }
 export async function getProductsForCollection(slug: string) {
   const all = await getAllProducts();
-  if (slug === "new-in") return all.slice(0, 12); if (slug === "trending-now") return all.filter((p) => p.badge === "Trending"); if (slug === "under-rs-1500") return all.filter((p) => p.price <= 1500); if (slug === "gift-ideas") return all.filter((p) => p.badge === "New" || p.badge === "Trending");
+  if (slug === "new-in") return all.slice(0, 12); if (slug === "trending-now") return all.filter((p) => p.badge === "Trending"); if (slug === "gift-ideas") return all.filter((p) => p.badge === "New" || p.badge === "Trending");
   const label = slug.replace(/-/g, " "); return all.filter((p) => p.category.toLowerCase() === label);
 }
 

@@ -7,8 +7,8 @@ export default function AboutPage() {
     <InfoPage title="About FetchWow">
       <p>
         FetchWow is a store for the things you didn&apos;t know you needed until
-        you saw them — curated finds at honest prices, delivered fast across
-        Pakistan and shipped worldwide.
+        you saw them — curated finds at honest prices, shipped to customers
+        all over the world.
       </p>
       <p>
         We keep things simple: no markup games, no fake urgency, just

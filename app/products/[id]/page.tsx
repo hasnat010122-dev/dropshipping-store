@@ -19,7 +19,7 @@ export async function generateMetadata({
 
   const description =
     product.description ||
-    `${product.name} — Rs ${product.price.toLocaleString()} at FetchWow. Fast delivery across Pakistan, worldwide shipping.`;
+    `${product.name} — Rs ${product.price.toLocaleString()} at FetchWow. Worldwide delivery available.`;
 
   return {
     title: `${product.name} — FetchWow`,

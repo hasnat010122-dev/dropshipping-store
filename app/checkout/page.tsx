@@ -10,8 +10,7 @@ import { useCurrency } from "@/context/CurrencyContext";
 import { BANK_TRANSFER } from "@/lib/payment";
 
 const paymentMethods = [
-  { id: "cod", label: "Cash on Delivery", note: "Pay when your order arrives" },
-  { id: BANK_TRANSFER.id, label: BANK_TRANSFER.label, note: "Transfer securely to our single business account" },
+  { id: BANK_TRANSFER.id, label: BANK_TRANSFER.label, note: "Transfer to the account shown below" },
 ];
 
 type SavedAddress = { id: string; label: string; address: string; city: string; phone: string };
@@ -27,7 +26,7 @@ export default function CheckoutPage() {
     address: "",
     city: "",
   });
-  const [paymentMethod, setPaymentMethod] = useState("cod");
+  const [paymentMethod, setPaymentMethod] = useState(BANK_TRANSFER.id);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
@@ -333,10 +332,7 @@ export default function CheckoutPage() {
                 <div className="mt-4 border border-line bg-paper-dim p-5 text-sm font-body text-ink-soft">
                   <p className="font-medium text-ink mb-3">Bank transfer details</p>
                   <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-                    <dt>Bank</dt><dd className="font-tag text-ink">{BANK_TRANSFER.bankName}</dd>
-                    <dt>Account title</dt><dd className="font-tag text-ink">{BANK_TRANSFER.accountTitle}</dd>
                     <dt>Account number</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.accountNumber}</dd>
-                    <dt>IBAN</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.iban}</dd>
                   </dl>
                   <p className="mt-4 text-xs leading-relaxed">
                     Place the order first, then transfer the exact total and use the order ID shown on the confirmation page as your payment reference. Keep your receipt until payment is confirmed.
