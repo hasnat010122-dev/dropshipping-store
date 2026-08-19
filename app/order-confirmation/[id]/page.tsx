@@ -4,6 +4,7 @@ import { getOrderById } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
+import { BANK_TRANSFER, paymentLabel } from "@/lib/payment";
 
 export const dynamic = "force-dynamic";
 
@@ -73,9 +74,27 @@ export default async function OrderConfirmationPage({
             <span className="font-tag">Rs {order.total.toLocaleString()}</span>
           </div>
           <p className="text-xs font-tag text-ink-soft/60 mt-4 uppercase">
-            Payment: {order.paymentMethod} · Status: {order.status}
+            Payment: {paymentLabel(order.paymentMethod)} · Status: {order.status}
           </p>
         </div>
+
+        {order.paymentMethod === BANK_TRANSFER.id && (
+          <div className="border-2 border-coral bg-white text-left p-6 mb-8">
+            <h2 className="font-display text-xl text-ink mb-2">Complete your bank transfer</h2>
+            <p className="text-sm font-body text-ink-soft mb-5">
+              Transfer exactly <strong className="text-ink">Rs {order.total.toLocaleString()}</strong> and use <strong className="text-ink">{order.id.slice(0, 8).toUpperCase()}</strong> as the payment reference.
+            </p>
+            <dl className="grid sm:grid-cols-[9rem_1fr] gap-x-4 gap-y-2 text-sm font-body text-ink-soft">
+              <dt>Bank</dt><dd className="font-tag text-ink">{BANK_TRANSFER.bankName}</dd>
+              <dt>Account title</dt><dd className="font-tag text-ink">{BANK_TRANSFER.accountTitle}</dd>
+              <dt>Account number</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.accountNumber}</dd>
+              <dt>IBAN</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.iban}</dd>
+            </dl>
+            <p className="text-xs font-body text-ink-soft mt-5">
+              Keep your transfer receipt. Your order remains pending until the payment is confirmed.
+            </p>
+          </div>
+        )}
 
         <Link
           href="/"

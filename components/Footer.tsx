@@ -44,12 +44,8 @@ export default function Footer() {
             worldwide shipping everywhere else.
           </p>
           <div className="flex gap-3 mt-5 font-tag text-xs flex-wrap">
-            <span className="border border-paper/20 px-2 py-1">JazzCash</span>
-            <span className="border border-paper/20 px-2 py-1">
-              EasyPaisa
-            </span>
-            <span className="border border-paper/20 px-2 py-1">SadaPay</span>
-            <span className="border border-paper/20 px-2 py-1">NayaPay</span>
+            <span className="border border-paper/20 px-2 py-1">Cash on Delivery</span>
+            <span className="border border-paper/20 px-2 py-1">Meezan Bank</span>
           </div>
         </div>
 

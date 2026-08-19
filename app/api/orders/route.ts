@@ -5,7 +5,7 @@ import { getSessionUserId } from "@/lib/session";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { cleanText } from "@/lib/security";
 
-const PAYMENT_METHODS = new Set(["jazzcash", "easypaisa", "sadapay", "nayapay", "cod"]);
+const PAYMENT_METHODS = new Set(["bank_transfer", "cod"]);
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Not allowed" }, { status: 401 });
