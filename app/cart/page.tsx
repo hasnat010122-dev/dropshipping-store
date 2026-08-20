@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import CheckoutSteps from "@/components/CheckoutSteps";
-import { useCart } from "@/context/CartContext";
+import { cartItemKey, useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
 import PriceDisplay from "@/components/PriceDisplay";
 
@@ -57,9 +57,11 @@ export default function CartPage() {
         ) : (
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-5">
-              {items.map((item) => (
+              {items.map((item) => {
+                const itemKey = cartItemKey(item);
+                return (
                 <div
-                  key={item.id}
+                  key={itemKey}
                   className="flex gap-5 border border-line bg-white p-5"
                 >
                   <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-paper-dim overflow-hidden">
@@ -80,17 +82,18 @@ export default function CartPage() {
                         {item.name}
                       </Link>
                       <button
-                        onClick={() => removeItem(item.id)}
+                        onClick={() => removeItem(itemKey)}
                         className="focus-ring text-ink-soft/50 hover:text-coral text-sm shrink-0"
                         aria-label={`Remove ${item.name}`}
                       >
                         Remove
                       </button>
                     </div>
+                    {item.color && <p className="text-xs text-ink-soft font-body mt-1">Color: {item.color}</p>}
                     <div className="flex items-center justify-between mt-3">
                       <div className="flex items-center border border-line">
                         <button
-                          onClick={() => updateQty(item.id, item.qty - 1)}
+                          onClick={() => updateQty(itemKey, item.qty - 1)}
                           className="focus-ring w-9 h-9 hover:bg-paper-dim font-tag"
                           aria-label="Decrease quantity"
                         >
@@ -100,7 +103,7 @@ export default function CartPage() {
                           {item.qty}
                         </span>
                         <button
-                          onClick={() => updateQty(item.id, item.qty + 1)}
+                          onClick={() => updateQty(itemKey, item.qty + 1)}
                           className="focus-ring w-9 h-9 hover:bg-paper-dim font-tag"
                           aria-label="Increase quantity"
                         >
@@ -113,7 +116,8 @@ export default function CartPage() {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
 
             <div className="border border-line bg-paper-dim p-7 h-fit sticky top-24">

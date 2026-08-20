@@ -48,7 +48,7 @@ export default async function OrderConfirmationPage({
                 className="flex justify-between text-sm font-body text-ink-soft"
               >
                 <span>
-                  {i.name} × {i.qty}
+                  {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                 </span>
                 <span className="font-tag">
                   {formatUSD(i.price * i.qty)}

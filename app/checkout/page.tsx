@@ -108,6 +108,7 @@ export default function CheckoutPage() {
             name: i.name,
             price: i.price,
             qty: i.qty,
+            color: i.color || null,
           })),
           subtotal: total,
           couponCode: appliedCoupon?.code || null,
@@ -358,7 +359,7 @@ export default function CheckoutPage() {
                     className="flex justify-between text-sm font-body text-ink-soft"
                   >
                     <span className="pr-3">
-                      {i.name} × {i.qty}
+                      {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                     </span>
                     <span className="font-tag shrink-0">
                       {format(i.price * i.qty)}

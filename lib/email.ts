@@ -33,7 +33,7 @@ export async function sendOtpEmail(email: string, code: string) {
 
 export async function sendOrderConfirmationEmail(order: OrderRow) {
   if (!order.email) return false;
-  const itemsHtml = order.items.map((item) => `<tr><td style="padding:7px 0">${escapeHtml(item.name)} × ${item.qty}</td><td style="padding:7px 0;text-align:right">${formatUSD(item.price * item.qty)}</td></tr>`).join("");
+  const itemsHtml = order.items.map((item) => `<tr><td style="padding:7px 0">${escapeHtml(item.name)}${item.color ? ` — ${escapeHtml(item.color)}` : ""} × ${item.qty}</td><td style="padding:7px 0;text-align:right">${formatUSD(item.price * item.qty)}</td></tr>`).join("");
   return deliver({
     to: order.email,
     subject: `${BRAND.name} order received — #${order.id.slice(0, 8).toUpperCase()}`,

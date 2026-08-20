@@ -11,6 +11,8 @@ create table if not exists public.products (
   category text not null,
   badge text,
   image text not null,
+  images jsonb not null default '[]'::jsonb,
+  colors jsonb not null default '[]'::jsonb,
   description text,
   stock integer not null default 0 check (stock >= 0),
   supplier_id text,
@@ -19,6 +21,11 @@ create table if not exists public.products (
   publication_status text not null default 'draft' check (publication_status in ('draft','approved','published')),
   created_at timestamptz not null default now()
 );
+
+-- Safe migration for stores created before product galleries and colors existed.
+alter table public.products add column if not exists images jsonb not null default '[]'::jsonb;
+alter table public.products add column if not exists colors jsonb not null default '[]'::jsonb;
+update public.products set images = jsonb_build_array(image) where images = '[]'::jsonb;
 
 create table if not exists public.suppliers (
   id text primary key,

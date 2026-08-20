@@ -2,19 +2,37 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Camera, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, X } from "lucide-react";
 import type { ProductRow, SupplierRow } from "@/lib/db";
 
 const CATEGORIES = ["Tech", "Home", "Fashion", "Beauty", "Other"];
 const BADGES = ["None", "New", "Trending", "Bestseller"];
 
-const emptyForm = {
+type ProductForm = {
+  name: string;
+  price: string;
+  compareAt: string;
+  category: string;
+  badge: string;
+  image: string;
+  images: string[];
+  colors: string;
+  description: string;
+  stock: string;
+  supplierId: string;
+  supplierProductUrl: string;
+  supplierCost: string;
+};
+
+const emptyForm: ProductForm = {
   name: "",
   price: "",
   compareAt: "",
   category: "Tech",
   badge: "None",
   image: "",
+  images: [],
+  colors: "",
   description: "",
   stock: "10",
   supplierId: "",
@@ -61,6 +79,8 @@ export default function AdminProductsPage() {
       category: p.category,
       badge: p.badge || "None",
       image: p.image,
+      images: p.images?.length ? p.images : [p.image],
+      colors: (p.colors || []).join(", "),
       description: p.description || "",
       stock: String(p.stock),
       supplierId: p.supplierId || "",
@@ -72,19 +92,44 @@ export default function AdminProductsPage() {
   }
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []).slice(0, Math.max(0, 12 - form.images.length));
+    if (!files.length) return;
     setUploading(true);
-    const fd = new FormData();
-    fd.append("file", file);
-    const res = await fetch("/api/upload", { method: "POST", body: fd });
-    const data = await res.json();
-    if (res.ok) {
-      setForm((f) => ({ ...f, image: data.url }));
-    } else {
-      setMessage(data.error || "Photo upload failed — try a different photo.");
+    setMessage("");
+    const uploaded: string[] = [];
+    for (const file of files) {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: fd });
+      const data = await res.json();
+      if (!res.ok) {
+        setMessage(data.error || `Could not upload ${file.name}.`);
+        continue;
+      }
+      uploaded.push(data.url);
     }
+    if (uploaded.length) {
+      setForm((f) => {
+        const images = [...f.images, ...uploaded].slice(0, 12);
+        return { ...f, images, image: images[0] || "" };
+      });
+    }
+    e.target.value = "";
     setUploading(false);
+  }
+
+  function removeImage(url: string) {
+    setForm((f) => {
+      const images = f.images.filter((image) => image !== url);
+      return { ...f, images, image: images[0] || "" };
+    });
+  }
+
+  function makeCover(url: string) {
+    setForm((f) => {
+      const images = [url, ...f.images.filter((image) => image !== url)];
+      return { ...f, images, image: url };
+    });
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -103,7 +148,9 @@ export default function AdminProductsPage() {
       compareAt: form.compareAt ? Number(form.compareAt) : null,
       category: form.category,
       badge: form.badge === "None" ? null : form.badge,
-      image: form.image,
+      image: form.images[0] || form.image,
+      images: form.images,
+      colors: form.colors.split(",").map((color) => color.trim()).filter(Boolean),
       description: form.description,
       stock: Number(form.stock),
       supplierId: form.supplierId || null,
@@ -175,33 +222,27 @@ export default function AdminProductsPage() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <span className={labelClass}>Photo</span>
-            <div className="flex items-center gap-4">
-              <div className="relative w-20 h-20 bg-[#0A0A10] border border-dashed border-white/15 rounded-lg shrink-0 overflow-hidden">
-                {form.image ? (
-                  <Image
-                    src={form.image}
-                    alt="Preview"
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                ) : (
-                  <span className="absolute inset-0 flex items-center justify-center text-white/20">
-                    <Camera size={20} />
-                  </span>
-                )}
+            <span className={labelClass}>Product photos (up to 12)</span>
+            {form.images.length > 0 && (
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mb-4">
+                {form.images.map((url, index) => (
+                  <div key={url} className="relative aspect-square bg-[#0A0A10] border border-white/10 rounded-lg overflow-hidden group">
+                    <Image src={url} alt={`Product photo ${index + 1}`} fill sizes="120px" className="object-cover" />
+                    <button type="button" onClick={() => removeImage(url)} aria-label="Remove photo" className="absolute top-1 right-1 bg-black/75 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 focus:opacity-100">
+                      <X size={13} />
+                    </button>
+                    <button type="button" onClick={() => makeCover(url)} className={`absolute bottom-0 inset-x-0 text-[10px] py-1 ${index === 0 ? "bg-coral text-white" : "bg-black/75 text-white/80 opacity-0 group-hover:opacity-100 focus:opacity-100"}`}>
+                      {index === 0 ? "Cover" : "Make cover"}
+                    </button>
+                  </div>
+                ))}
               </div>
-              <label className="focus-ring cursor-pointer bg-coral text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-coral-dim transition-colors">
-                {uploading ? "Uploading…" : "Choose photo"}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleUpload}
-                  className="hidden"
-                />
-              </label>
-            </div>
+            )}
+            <label className="focus-ring inline-flex cursor-pointer bg-coral text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-coral-dim transition-colors">
+              {uploading ? "Uploading…" : form.images.length ? "Add more photos" : "Choose photos"}
+              <input type="file" accept="image/*" multiple onChange={handleUpload} disabled={uploading || form.images.length >= 12} className="hidden" />
+            </label>
+            <p className="text-xs text-white/30 mt-2">The first photo is the cover. Click another photo to make it the cover.</p>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-4">
@@ -286,6 +327,16 @@ export default function AdminProductsPage() {
                 value={form.stock}
                 onChange={(e) => setForm({ ...form, stock: e.target.value })}
                 className={`${inputClass} font-tag`}
+              />
+            </label>
+
+            <label className="block sm:col-span-2">
+              <span className={labelClass}>Available colors <span className="text-white/25">(optional, comma separated)</span></span>
+              <input
+                value={form.colors}
+                onChange={(e) => setForm({ ...form, colors: e.target.value })}
+                placeholder="Black, Blue, Red"
+                className={inputClass}
               />
             </label>
 

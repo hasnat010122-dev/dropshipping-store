@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import TiltCard from "@/components/TiltCard";
 import AddToCartBox from "@/components/AddToCartBox";
@@ -14,6 +15,10 @@ export default function ProductHero({
   product: ProductRow;
   discount: number | null;
 }) {
+  const gallery = Array.from(new Set([product.image, ...(product.images || [])].filter(Boolean)));
+  const [selectedImage, setSelectedImage] = useState(gallery[0]);
+  const [selectedColor, setSelectedColor] = useState<string | undefined>();
+
   return (
     <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
       <motion.div
@@ -26,7 +31,7 @@ export default function ProductHero({
           className="aspect-square bg-paper-dim border border-line overflow-hidden shadow-lg"
         >
           <Image
-            src={product.image}
+            src={selectedImage}
             alt={product.name}
             fill
             sizes="(min-width: 768px) 45vw, 100vw"
@@ -39,6 +44,21 @@ export default function ProductHero({
             </span>
           )}
         </TiltCard>
+        {gallery.length > 1 && (
+          <div className="grid grid-cols-5 gap-2 mt-3">
+            {gallery.map((image, index) => (
+              <button
+                key={image}
+                type="button"
+                onClick={() => setSelectedImage(image)}
+                className={`focus-ring relative aspect-square overflow-hidden border ${selectedImage === image ? "border-coral" : "border-line"}`}
+                aria-label={`View product image ${index + 1}`}
+              >
+                <Image src={image} alt={`${product.name} view ${index + 1}`} fill sizes="120px" className="object-cover" />
+              </button>
+            ))}
+          </div>
+        )}
       </motion.div>
 
       <motion.div
@@ -76,7 +96,25 @@ export default function ProductHero({
             "A genuinely useful pick from this week's drop. Sourced for quality, priced to actually be worth it."}
         </p>
 
-        <AddToCartBox product={product} />
+        {Boolean(product.colors?.length) && (
+          <div className="mb-6">
+            <p className="text-sm font-body text-ink mb-2">Color: <strong>{selectedColor || "Select one"}</strong></p>
+            <div className="flex flex-wrap gap-2">
+              {product.colors!.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setSelectedColor(color)}
+                  className={`focus-ring border px-4 py-2 text-sm font-body transition-colors ${selectedColor === color ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink hover:border-coral"}`}
+                >
+                  {color}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <AddToCartBox product={product} selectedColor={selectedColor} selectedImage={selectedImage} />
 
         <div className="border-t border-line pt-6 space-y-3 text-sm font-body text-ink-soft">
           <p>🚚 Worldwide delivery available</p>

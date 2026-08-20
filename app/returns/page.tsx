@@ -12,7 +12,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-type OrderItem = { id: string; name: string; price: number; qty: number };
+type OrderItem = { id: string; name: string; price: number; qty: number; color?: string | null };
 type OrderResult = {
   id: string;
   customerName: string;

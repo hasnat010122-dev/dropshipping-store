@@ -1,36 +1,31 @@
-# FetchWow cumulative update
+# FetchWow multiple-image and color update
 
-This package includes every requested change to date, plus the USD and product-image fixes.
+## Features
 
-## New fixes
+- Admin can upload up to 12 images per product.
+- Admin can remove images and choose the cover image.
+- Admin can enter colors as a comma-separated list, for example `Black, Blue, Red`.
+- Product pages show an image gallery and color selector.
+- Products with colors cannot be added until a color is selected.
+- Different colors of the same product remain separate cart lines.
+- The chosen color is included in checkout, orders, tracking, confirmation emails, returns and supplier/admin views.
+- Existing products keep their current image automatically.
 
-- Customer-facing store currency is USD only.
-- The PKR/USD toggle is removed.
-- Existing PKR product amounts are converted for display using `NEXT_PUBLIC_USD_RATE` (default: 278 PKR per USD).
-- Checkout, account history, tracking, product metadata, confirmation pages, and customer emails display USD.
-- Because the receiving bank account settles in PKR, checkout and transfer instructions still show the exact PKR amount the customer must send.
-- Supabase product images are now authorized in `next.config.ts` for Next.js Image Optimization.
+## Required installation order
 
-The uploaded image itself was tested and returns HTTP 200. The live Vercel image optimizer returned HTTP 400 because the Supabase hostname was absent from `next.config.ts`; this update adds the exact approved Supabase Storage path.
+1. Open Supabase -> SQL Editor -> New query.
+2. Run `PRODUCT-GALLERY-MIGRATION.sql` once.
+3. Copy all source files from this package into the identical GitHub paths.
+4. Commit to `main` and wait for Vercel to report Ready.
+5. Follow `EMAIL-SETUP.md` to activate sign-in emails.
 
-## Previous included changes
+## Test
 
-- Bank-account transfer only; no COD or wallets.
-- Only account number `00300114982252` is displayed.
-- Phone/WhatsApp `03086177169`; email `fetchwow1@gmail.com`.
-- Worldwide-delivery wording.
-- `Under Rs 1500` option removed.
+1. Edit a product in Admin.
+2. Upload two or more photos.
+3. Enter colors such as `Black, Blue, Red`.
+4. Save, approve and publish.
+5. Open the product page and test the gallery and each color.
+6. Add two different colors to the cart and verify they appear as separate lines.
 
-## Install
-
-Copy every source file in this package into the identical path in the GitHub repository and commit to `main`. Vercel should deploy automatically. A redeployment is required because `next.config.ts` changed.
-
-After Vercel reports Ready:
-
-1. Open the homepage in an incognito window and confirm all product prices show `$` only.
-2. Confirm the currency-toggle button is gone.
-3. Confirm the uploaded product image appears on the homepage and product page.
-4. If the old placeholder remains, hard-refresh with Ctrl+Shift+R or clear the Vercel/browser image cache.
-5. Place a test order and confirm the display total is USD while transfer instructions provide the exact PKR settlement amount.
-
-This version passed ESLint, all 15 automated tests, TypeScript validation, and a complete Next.js production build.
+Validated with ESLint, all 15 automated tests, TypeScript, and a complete Next.js production build.

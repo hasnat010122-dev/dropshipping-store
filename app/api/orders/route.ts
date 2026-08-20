@@ -31,21 +31,24 @@ export async function POST(req: NextRequest) {
   }
 
   const quantities = new Map<string, number>();
+  const serverItems: OrderItem[] = [];
   for (const item of requestedItems) {
     const id = cleanText(item?.id, 100);
     const qty = Number(item?.qty);
+    const color = cleanText(item?.color, 60) || null;
     if (!id || !Number.isInteger(qty) || qty < 1 || qty > 10) {
       return NextResponse.json({ error: "Your cart contains an invalid quantity." }, { status: 400 });
     }
-    quantities.set(id, (quantities.get(id) || 0) + qty);
-  }
-
-  const serverItems: OrderItem[] = [];
-  for (const [id, qty] of quantities) {
     const product = await getProductById(id);
     if (!product) return NextResponse.json({ error: "A product in your cart is no longer available." }, { status: 409 });
-    if (product.stock < qty) return NextResponse.json({ error: `Only ${product.stock} units of ${product.name} are currently available.` }, { status: 409 });
-    serverItems.push({ id: product.id, name: product.name, price: product.price, qty });
+    const colors = product.colors || [];
+    if (colors.length && (!color || !colors.includes(color))) {
+      return NextResponse.json({ error: `Please select an available color for ${product.name}.` }, { status: 409 });
+    }
+    const totalQty = (quantities.get(id) || 0) + qty;
+    if (product.stock < totalQty) return NextResponse.json({ error: `Only ${product.stock} units of ${product.name} are currently available.` }, { status: 409 });
+    quantities.set(id, totalQty);
+    serverItems.push({ id: product.id, name: product.name, price: product.price, qty, color });
   }
 
   const subtotal = serverItems.reduce((sum, item) => sum + item.price * item.qty, 0);

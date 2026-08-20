@@ -9,7 +9,7 @@ import { formatUSD } from "@/lib/currency";
 
 type Address = { id: string; label: string; address: string; city: string; phone: string };
 type User = { id: string; name: string; email: string; addresses: Address[] };
-type OrderItem = { id: string; name: string; price: number; qty: number };
+type OrderItem = { id: string; name: string; price: number; qty: number; color?: string | null };
 type Order = {
   id: string;
   items: OrderItem[];
@@ -247,7 +247,7 @@ export default function AccountPage() {
                     </span>
                   </div>
                   <p className="text-sm text-ink-soft font-body mb-1">
-                    {o.items.map((i) => i.name).join(", ")}
+                    {o.items.map((i) => `${i.name}${i.color ? ` (${i.color})` : ""}`).join(", ")}
                   </p>
                   <div className="flex justify-between items-center">
                     <span className="text-xs text-ink-soft/50 font-tag">

@@ -21,10 +21,10 @@ export const toCustomerOrder = local.toCustomerOrder;
 export const getCollectionTitle = local.getCollectionTitle;
 
 function productFrom(row: Record<string, any>): ProductRow {
-  return { id: row.id, name: row.name, price: Number(row.price), compareAt: row.compare_at == null ? null : Number(row.compare_at), category: row.category, badge: row.badge, image: row.image, description: row.description, stock: Number(row.stock), supplierId: row.supplier_id, supplierProductUrl: row.supplier_product_url, supplierCost: row.supplier_cost == null ? null : Number(row.supplier_cost), publicationStatus: row.publication_status, createdAt: row.created_at };
+  return { id: row.id, name: row.name, price: Number(row.price), compareAt: row.compare_at == null ? null : Number(row.compare_at), category: row.category, badge: row.badge, image: row.image, images: Array.isArray(row.images) && row.images.length ? row.images : [row.image], colors: Array.isArray(row.colors) ? row.colors : [], description: row.description, stock: Number(row.stock), supplierId: row.supplier_id, supplierProductUrl: row.supplier_product_url, supplierCost: row.supplier_cost == null ? null : Number(row.supplier_cost), publicationStatus: row.publication_status, createdAt: row.created_at };
 }
 function productTo(row: ProductRow) {
-  return { id: row.id, name: row.name, price: row.price, compare_at: row.compareAt, category: row.category, badge: row.badge, image: row.image, description: row.description, stock: row.stock, supplier_id: row.supplierId, supplier_product_url: row.supplierProductUrl, supplier_cost: row.supplierCost, publication_status: row.publicationStatus || "published", created_at: row.createdAt };
+  return { id: row.id, name: row.name, price: row.price, compare_at: row.compareAt, category: row.category, badge: row.badge, image: row.image, images: row.images || [row.image], colors: row.colors || [], description: row.description, stock: row.stock, supplier_id: row.supplierId, supplier_product_url: row.supplierProductUrl, supplier_cost: row.supplierCost, publication_status: row.publicationStatus || "published", created_at: row.createdAt };
 }
 function supplierFrom(row: Record<string, any>): SupplierRow {
   return { id: row.id, name: row.name, platform: row.platform, contactName: row.contact_name, phone: row.phone, email: row.email, website: row.website, notes: row.notes, createdAt: row.created_at };

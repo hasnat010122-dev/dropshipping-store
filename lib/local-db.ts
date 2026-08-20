@@ -21,6 +21,8 @@ export type ProductRow = {
   category: string;
   badge: string | null;
   image: string;
+  images?: string[];
+  colors?: string[];
   description: string | null;
   stock: number;
   supplierId: string | null;
@@ -38,7 +40,7 @@ export function toPublicProduct(product: ProductRow): PublicProductRow {
   ) as PublicProductRow;
 }
 
-export type OrderItem = { id: string; name: string; price: number; qty: number };
+export type OrderItem = { id: string; name: string; price: number; qty: number; color?: string | null };
 
 export type FulfillmentStatus =
   | "not_ordered"

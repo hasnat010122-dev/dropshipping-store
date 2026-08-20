@@ -28,7 +28,7 @@ function whatsappLink(phone: string, message: string) {
 
 type SupplierGroup = {
   supplier: SupplierRow;
-  items: { name: string; qty: number }[];
+  items: { name: string; qty: number; color?: string | null }[];
 };
 
 // Groups an order's line items by which supplier each product is sourced
@@ -55,14 +55,14 @@ function getSupplierGroups(
     if (!groups.has(supplier.id)) {
       groups.set(supplier.id, { supplier, items: [] });
     }
-    groups.get(supplier.id)!.items.push({ name: item.name, qty: item.qty });
+    groups.get(supplier.id)!.items.push({ name: item.name, qty: item.qty, color: item.color });
   }
 
   return { groups: Array.from(groups.values()), unassignedCount };
 }
 
 function buildSupplierMessage(order: OrderRow, group: SupplierGroup) {
-  const itemLines = group.items.map((i) => `• ${i.name} × ${i.qty}`).join("\n");
+  const itemLines = group.items.map((i) => `• ${i.name}${i.color ? ` (${i.color})` : ""} × ${i.qty}`).join("\n");
   return `New order from ${BRAND.name} — please ship directly to the customer below.
 
 Order ref: ${order.id.slice(0, 8).toUpperCase()}
@@ -251,7 +251,7 @@ export default function AdminOrdersPage() {
                       className="flex justify-between text-sm text-white/60"
                     >
                       <span>
-                        {i.name} × {i.qty}
+                        {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                       </span>
                       <span className="font-tag">
                         Rs {(i.price * i.qty).toLocaleString()}
@@ -309,7 +309,7 @@ export default function AdminOrdersPage() {
                             <ul className="text-xs text-white/60 mb-3 space-y-0.5">
                               {group.items.map((i) => (
                                 <li key={i.name}>
-                                  • {i.name} × {i.qty}
+                                  • {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                                 </li>
                               ))}
                             </ul>
