@@ -7,7 +7,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { formatUSD } from "@/lib/currency";
 
-type Address = { id: string; label: string; address: string; city: string; phone: string };
+type Address = {
+  id: string;
+  label: string;
+  address: string;
+  addressLine2?: string;
+  city: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  phone: string;
+};
 type User = { id: string; name: string; email: string; addresses: Address[] };
 type OrderItem = { id: string; name: string; price: number; qty: number; color?: string | null };
 type Order = {
@@ -27,7 +37,11 @@ export default function AccountPage() {
   const [addressForm, setAddressForm] = useState({
     label: "Home",
     address: "",
+    addressLine2: "",
     city: "",
+    state: "",
+    postalCode: "",
+    country: "",
     phone: "",
   });
 
@@ -71,7 +85,7 @@ export default function AccountPage() {
     if (res.ok && user) {
       const addresses = await res.json();
       setUser({ ...user, addresses });
-      setAddressForm({ label: "Home", address: "", city: "", phone: "" });
+      setAddressForm({ label: "Home", address: "", addressLine2: "", city: "", state: "", postalCode: "", country: "", phone: "" });
       setShowAddressForm(false);
     }
   }
@@ -159,28 +173,13 @@ export default function AccountPage() {
                 onChange={(e) => setAddressForm({ ...addressForm, label: e.target.value })}
                 className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink sm:col-span-2"
               />
-              <textarea
-                required
-                placeholder="Full address"
-                rows={2}
-                value={addressForm.address}
-                onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })}
-                className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink sm:col-span-2 resize-none"
-              />
-              <input
-                required
-                placeholder="City"
-                value={addressForm.city}
-                onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })}
-                className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink"
-              />
-              <input
-                required
-                placeholder="Phone"
-                value={addressForm.phone}
-                onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })}
-                className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink"
-              />
+              <input required autoComplete="country-name" placeholder="Country / Region" value={addressForm.country} onChange={(e) => setAddressForm({ ...addressForm, country: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink sm:col-span-2" />
+              <input required autoComplete="address-line1" placeholder="Street address" value={addressForm.address} onChange={(e) => setAddressForm({ ...addressForm, address: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink sm:col-span-2" />
+              <input autoComplete="address-line2" placeholder="Apartment, suite, unit (optional)" value={addressForm.addressLine2} onChange={(e) => setAddressForm({ ...addressForm, addressLine2: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink sm:col-span-2" />
+              <input required autoComplete="address-level2" placeholder="City" value={addressForm.city} onChange={(e) => setAddressForm({ ...addressForm, city: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
+              <input required autoComplete="address-level1" placeholder="State / Province / Region" value={addressForm.state} onChange={(e) => setAddressForm({ ...addressForm, state: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
+              <input required autoComplete="postal-code" placeholder="Postal / ZIP code" value={addressForm.postalCode} onChange={(e) => setAddressForm({ ...addressForm, postalCode: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
+              <input required autoComplete="tel" placeholder="Phone number" value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })} className="focus-ring border border-line bg-white px-3 py-2 text-sm outline-none focus:border-ink" />
               <button
                 type="submit"
                 className="focus-ring sm:col-span-2 bg-ink text-paper py-2.5 text-sm font-body font-medium hover:bg-coral transition-colors"
@@ -210,7 +209,7 @@ export default function AccountPage() {
                     </button>
                   </div>
                   <p className="text-sm text-ink-soft font-body">
-                    {a.address}, {a.city}
+                    {[a.address, a.addressLine2, a.city, a.state, a.postalCode, a.country].filter(Boolean).join(", ")}
                   </p>
                   <p className="text-xs text-ink-soft/50 font-tag mt-1">{a.phone}</p>
                 </div>

@@ -1,11 +1,34 @@
-# Product saving fix
+# Professional address and USD admin pricing update
 
-The most likely cause is that the deployed product form sends `images` and `colors`, but those columns have not yet been added to the existing Supabase `products` table.
+## Changes
 
-1. Run `RUN-IN-SUPABASE.sql` in Supabase SQL Editor.
-2. Confirm the final query returns two rows: `colors` and `images`.
-3. Replace `app/admin/(dashboard)/products/page.tsx` in GitHub with the file in this package.
-4. Commit to `main` and wait for Vercel to deploy.
-5. Sign into Admin and save the product again.
+### Checkout and saved addresses
 
-The UI fix guarantees the Saving state ends and displays an HTTP error if the server rejects the request, instead of remaining stuck forever.
+- Country / Region
+- Street address
+- Apartment, suite or unit (optional)
+- City
+- State / Province / Region
+- Postal / ZIP code
+- Phone number
+- Browser autofill attributes for professional address completion
+- Existing old saved addresses remain compatible
+- Complete structured address is included with the order
+
+### Admin product pricing
+
+- Selling price input is USD
+- Original/compare-at price input is USD
+- Supplier cost input is USD
+- Product cards in Admin display USD
+- Existing stored PKR values are converted to USD when editing
+- USD input is converted back to PKR internally so the current checkout and Pakistani bank-transfer settlement continue to work correctly
+- Uses `NEXT_PUBLIC_USD_RATE`, defaulting to 278 PKR per USD
+
+This package also includes the improved product-save error handling in the Admin Products file.
+
+## Install
+
+Copy all six source files to the identical paths in GitHub, commit to `main`, and wait for Vercel to deploy. No Supabase migration is required for the address update because saved addresses are stored as JSON.
+
+Validated with ESLint, all 15 tests, TypeScript, and a complete production build.

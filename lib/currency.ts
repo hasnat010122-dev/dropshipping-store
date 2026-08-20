@@ -4,6 +4,10 @@ export function pkrToUsd(pkr: number): number {
   return pkr / USD_RATE;
 }
 
+export function usdToPkr(usd: number): number {
+  return Math.round(usd * USD_RATE);
+}
+
 export function formatPKR(amount: number): string {
   return `Rs ${Math.round(amount).toLocaleString()}`;
 }

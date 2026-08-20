@@ -13,7 +13,17 @@ const paymentMethods = [
   { id: BANK_TRANSFER.id, label: BANK_TRANSFER.label, note: "Transfer to the account shown below" },
 ];
 
-type SavedAddress = { id: string; label: string; address: string; city: string; phone: string };
+type SavedAddress = {
+  id: string;
+  label: string;
+  address: string;
+  addressLine2?: string;
+  city: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  phone: string;
+};
 
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
@@ -24,7 +34,11 @@ export default function CheckoutPage() {
     phone: "",
     email: "",
     address: "",
+    addressLine2: "",
     city: "",
+    state: "",
+    postalCode: "",
+    country: "",
   });
   const [paymentMethod, setPaymentMethod] = useState(BANK_TRANSFER.id);
   const [submitting, setSubmitting] = useState(false);
@@ -45,7 +59,16 @@ export default function CheckoutPage() {
           if (d.user.addresses?.length > 0) {
             const first = d.user.addresses[0];
             setSelectedAddressId(first.id);
-            setForm((f) => ({ ...f, address: first.address, city: first.city, phone: first.phone }));
+            setForm((f) => ({
+              ...f,
+              address: first.address,
+              addressLine2: first.addressLine2 || "",
+              city: first.city,
+              state: first.state || "",
+              postalCode: first.postalCode || "",
+              country: first.country || "",
+              phone: first.phone,
+            }));
           }
         }
       })
@@ -55,10 +78,19 @@ export default function CheckoutPage() {
   function selectAddress(a: SavedAddress | "new") {
     if (a === "new") {
       setSelectedAddressId("new");
-      setForm((f) => ({ ...f, address: "", city: "", phone: "" }));
+      setForm((f) => ({ ...f, address: "", addressLine2: "", city: "", state: "", postalCode: "", country: "", phone: "" }));
     } else {
       setSelectedAddressId(a.id);
-      setForm((f) => ({ ...f, address: a.address, city: a.city, phone: a.phone }));
+      setForm((f) => ({
+        ...f,
+        address: a.address,
+        addressLine2: a.addressLine2 || "",
+        city: a.city,
+        state: a.state || "",
+        postalCode: a.postalCode || "",
+        country: a.country || "",
+        phone: a.phone,
+      }));
     }
   }
 
@@ -102,6 +134,7 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...form,
+          address: [form.address, form.addressLine2, form.state, form.postalCode, form.country].filter(Boolean).join(", "),
           paymentMethod,
           items: items.map((i) => ({
             id: i.id,
@@ -199,7 +232,7 @@ export default function CheckoutPage() {
                           📍 {a.label}
                         </span>
                         <span className="text-xs text-ink-soft font-body">
-                          {a.address}, {a.city} · {a.phone}
+                          {[a.address, a.addressLine2, a.city, a.state, a.postalCode, a.country].filter(Boolean).join(", ")} · {a.phone}
                         </span>
                       </span>
                     </label>
@@ -264,31 +297,29 @@ export default function CheckoutPage() {
                     className="focus-ring w-full border border-line bg-paper-dim px-3.5 py-3 outline-none text-ink-soft"
                   />
                 </label>
-                <label className="block">
-                  <span className="text-sm font-body text-ink-soft mb-1.5 block">
-                    City
-                  </span>
-                  <input
-                    required
-                    value={form.city}
-                    onChange={(e) => setForm({ ...form, city: e.target.value })}
-                    placeholder="Multan"
-                    className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors"
-                  />
+                <label className="block sm:col-span-2">
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Country / Region</span>
+                  <input required autoComplete="country-name" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="United States" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
                 </label>
                 <label className="block sm:col-span-2">
-                  <span className="text-sm font-body text-ink-soft mb-1.5 block">
-                    Full address
-                  </span>
-                  <textarea
-                    required
-                    rows={3}
-                    value={form.address}
-                    onChange={(e) =>
-                      setForm({ ...form, address: e.target.value })
-                    }
-                    className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink resize-none transition-colors"
-                  />
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Street address</span>
+                  <input required autoComplete="address-line1" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} placeholder="House number and street name" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                </label>
+                <label className="block sm:col-span-2">
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Apartment, suite, unit, etc. <span className="text-ink-soft/50">(optional)</span></span>
+                  <input autoComplete="address-line2" value={form.addressLine2} onChange={(e) => setForm({ ...form, addressLine2: e.target.value })} placeholder="Apartment, suite, floor" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">City</span>
+                  <input required autoComplete="address-level2" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} placeholder="City" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">State / Province / Region</span>
+                  <input required autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="State or province" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Postal / ZIP code</span>
+                  <input required autoComplete="postal-code" value={form.postalCode} onChange={(e) => setForm({ ...form, postalCode: e.target.value })} placeholder="Postal code" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
                 </label>
               </div>
             </fieldset>
