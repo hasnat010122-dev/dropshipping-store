@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Pencil, Trash2, X } from "lucide-react";
+import { Pencil, Trash2, X, Plus } from "lucide-react";
 import type { ProductRow, SupplierRow } from "@/lib/db";
 import { formatUSD, pkrToUsd, usdToPkr } from "@/lib/currency";
 
@@ -17,7 +17,8 @@ type ProductForm = {
   badge: string;
   image: string;
   images: string[];
-  colors: string;
+  colors: string[];
+  colorImages: Record<string, string>;
   description: string;
   stock: string;
   supplierId: string;
@@ -33,7 +34,8 @@ const emptyForm: ProductForm = {
   badge: "None",
   image: "",
   images: [],
-  colors: "",
+  colors: [],
+  colorImages: {},
   description: "",
   stock: "10",
   supplierId: "",
@@ -50,6 +52,7 @@ export default function AdminProductsPage() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [newColor, setNewColor] = useState("");
   const formTopRef = useRef<HTMLDivElement>(null);
 
   async function loadAll() {
@@ -81,7 +84,8 @@ export default function AdminProductsPage() {
       badge: p.badge || "None",
       image: p.image,
       images: p.images?.length ? p.images : [p.image],
-      colors: (p.colors || []).join(", "),
+      colors: p.colors || [],
+      colorImages: p.colorImages || {},
       description: p.description || "",
       stock: String(p.stock),
       supplierId: p.supplierId || "",
@@ -133,6 +137,21 @@ export default function AdminProductsPage() {
     });
   }
 
+  function addColor() {
+    const color = newColor.trim();
+    if (!color || form.colors.some((item) => item.toLowerCase() === color.toLowerCase())) return;
+    setForm((current) => ({ ...current, colors: [...current.colors, color] }));
+    setNewColor("");
+  }
+
+  function removeColor(color: string) {
+    setForm((current) => {
+      const colorImages = { ...current.colorImages };
+      delete colorImages[color];
+      return { ...current, colors: current.colors.filter((item) => item !== color), colorImages };
+    });
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setMessage("");
@@ -151,7 +170,8 @@ export default function AdminProductsPage() {
       badge: form.badge === "None" ? null : form.badge,
       image: form.images[0] || form.image,
       images: form.images,
-      colors: form.colors.split(",").map((color) => color.trim()).filter(Boolean),
+      colors: form.colors,
+      colorImages: Object.fromEntries(Object.entries(form.colorImages).filter(([color, url]) => form.colors.includes(color) && url)),
       description: form.description,
       stock: Number(form.stock),
       supplierId: form.supplierId || null,
@@ -342,15 +362,40 @@ export default function AdminProductsPage() {
               />
             </label>
 
-            <label className="block sm:col-span-2">
-              <span className={labelClass}>Available colors <span className="text-white/25">(optional, comma separated)</span></span>
-              <input
-                value={form.colors}
-                onChange={(e) => setForm({ ...form, colors: e.target.value })}
-                placeholder="Black, Blue, Red"
-                className={inputClass}
-              />
-            </label>
+            <div className="sm:col-span-2">
+              <span className={labelClass}>Available colors <span className="text-white/25">(optional)</span></span>
+              <div className="flex gap-2">
+                <input
+                  value={newColor}
+                  onChange={(e) => setNewColor(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addColor(); } }}
+                  placeholder="Enter one color, e.g. Black"
+                  className={inputClass}
+                />
+                <button type="button" onClick={addColor} className="focus-ring shrink-0 border border-white/15 px-4 rounded-lg text-white/80 hover:border-coral hover:text-coral">
+                  <Plus size={16} />
+                </button>
+              </div>
+              {form.colors.length > 0 && (
+                <div className="space-y-3 mt-4">
+                  {form.colors.map((color) => (
+                    <div key={color} className="grid sm:grid-cols-[auto_1fr_auto] items-center gap-3 border border-white/10 rounded-lg p-3">
+                      <span className="text-sm text-white font-medium min-w-20">{color}</span>
+                      <select
+                        value={form.colorImages[color] || ""}
+                        onChange={(e) => setForm((current) => ({ ...current, colorImages: { ...current.colorImages, [color]: e.target.value } }))}
+                        className={inputClass}
+                      >
+                        <option value="">Use cover image</option>
+                        {form.images.map((url, index) => <option key={url} value={url}>Photo {index + 1}{index === 0 ? " (cover)" : ""}</option>)}
+                      </select>
+                      <button type="button" onClick={() => removeColor(color)} aria-label={`Remove ${color}`} className="text-white/40 hover:text-coral p-2"><X size={16} /></button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <p className="text-xs text-white/30 mt-2">Add each color separately, then optionally assign one of the uploaded photos. Without an assigned photo, the cover image is used.</p>
+            </div>
 
             <label className="block sm:col-span-2">
               <span className={labelClass}>

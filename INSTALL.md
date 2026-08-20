@@ -1,34 +1,20 @@
-# Professional address and USD admin pricing update
+# Separate color buttons with color-specific images
 
-## Changes
+## What changes
 
-### Checkout and saved addresses
+- Admin adds each color separately instead of typing one comma-separated value.
+- Every color is shown as its own row and its own storefront button.
+- Admin can assign any uploaded product photo to each color.
+- Clicking a color on the product page switches to that color's assigned image.
+- If no image is assigned to a color, clicking it shows the normal cover image.
+- Removing a color also removes its image assignment.
 
-- Country / Region
-- Street address
-- Apartment, suite or unit (optional)
-- City
-- State / Province / Region
-- Postal / ZIP code
-- Phone number
-- Browser autofill attributes for professional address completion
-- Existing old saved addresses remain compatible
-- Complete structured address is included with the order
+## Install order
 
-### Admin product pricing
+1. In Supabase SQL Editor, run `RUN-IN-SUPABASE.sql` without copying any brackets or Markdown backticks.
+2. Confirm the result shows `color_images | jsonb`.
+3. Copy the seven source files to the identical GitHub paths.
+4. Commit to `main` and wait for Vercel to report Ready.
+5. Edit a product, upload all color photos first, add colors one at a time, and select the matching photo for each color.
 
-- Selling price input is USD
-- Original/compare-at price input is USD
-- Supplier cost input is USD
-- Product cards in Admin display USD
-- Existing stored PKR values are converted to USD when editing
-- USD input is converted back to PKR internally so the current checkout and Pakistani bank-transfer settlement continue to work correctly
-- Uses `NEXT_PUBLIC_USD_RATE`, defaulting to 278 PKR per USD
-
-This package also includes the improved product-save error handling in the Admin Products file.
-
-## Install
-
-Copy all six source files to the identical paths in GitHub, commit to `main`, and wait for Vercel to deploy. No Supabase migration is required for the address update because saved addresses are stored as JSON.
-
-Validated with ESLint, all 15 tests, TypeScript, and a complete production build.
+Validated with ESLint, all 15 tests, TypeScript, and a full production build.

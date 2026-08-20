@@ -23,6 +23,7 @@ export type ProductRow = {
   image: string;
   images?: string[];
   colors?: string[];
+  colorImages?: Record<string, string>;
   description: string | null;
   stock: number;
   supplierId: string | null;

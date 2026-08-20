@@ -104,7 +104,10 @@ export default function ProductHero({
                 <button
                   key={color}
                   type="button"
-                  onClick={() => setSelectedColor(color)}
+                  onClick={() => {
+                    setSelectedColor(color);
+                    setSelectedImage(product.colorImages?.[color] || gallery[0]);
+                  }}
                   className={`focus-ring border px-4 py-2 text-sm font-body transition-colors ${selectedColor === color ? "border-ink bg-ink text-paper" : "border-line bg-white text-ink hover:border-coral"}`}
                 >
                   {color}

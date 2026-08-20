@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getProductById, getProductByIdAdmin, updateProduct, updateProductPublicationStatus, deleteProduct, toPublicProduct } from "@/lib/db";
 import { isAdmin } from "@/lib/auth";
 
+function sanitizeColorImages(value: unknown): Record<string, string> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  const result: Record<string, string> = {};
+  for (const [color, url] of Object.entries(value).slice(0, 30)) {
+    if (color.trim() && typeof url === "string" && url.trim()) result[color.trim()] = url.trim();
+  }
+  return result;
+}
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -31,6 +40,7 @@ export async function PUT(
     image,
     images,
     colors,
+    colorImages,
     description,
     stock,
     supplierId,
@@ -50,6 +60,7 @@ export async function PUT(
     image,
     images: Array.isArray(images) ? images.filter((value): value is string => typeof value === "string" && value.trim().length > 0).slice(0, 12) : [image],
     colors: Array.isArray(colors) ? colors.filter((value): value is string => typeof value === "string" && value.trim().length > 0).map((value) => value.trim()).slice(0, 30) : [],
+    colorImages: sanitizeColorImages(colorImages),
     description: description || null,
     stock: stock ? Math.round(Number(stock)) : 0,
     supplierId: supplierId || null,
