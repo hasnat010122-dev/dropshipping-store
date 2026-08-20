@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
 import { BANK_TRANSFER, paymentLabel } from "@/lib/payment";
+import { formatUSD } from "@/lib/currency";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,7 @@ export default async function OrderConfirmationPage({
                   {i.name} × {i.qty}
                 </span>
                 <span className="font-tag">
-                  Rs {(i.price * i.qty).toLocaleString()}
+                  {formatUSD(i.price * i.qty)}
                 </span>
               </div>
             ))}
@@ -59,19 +60,19 @@ export default async function OrderConfirmationPage({
             <div className="space-y-1 mb-2">
               <div className="flex justify-between text-sm font-body text-ink-soft">
                 <span>Subtotal</span>
-                <span className="font-tag">Rs {order.subtotal.toLocaleString()}</span>
+                <span className="font-tag">{formatUSD(order.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm font-body text-emerald-700">
                 <span>Discount ({order.couponCode})</span>
                 <span className="font-tag">
-                  − Rs {order.discount.toLocaleString()}
+                  − {formatUSD(order.discount)}
                 </span>
               </div>
             </div>
           )}
           <div className="border-t border-line pt-4 flex justify-between font-display text-lg text-ink">
             <span>Total</span>
-            <span className="font-tag">Rs {order.total.toLocaleString()}</span>
+            <span className="font-tag">{formatUSD(order.total)}</span>
           </div>
           <p className="text-xs font-tag text-ink-soft/60 mt-4 uppercase">
             Payment: {paymentLabel(order.paymentMethod)} · Status: {order.status}

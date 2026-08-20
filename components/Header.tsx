@@ -5,13 +5,11 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { categories } from "@/lib/products";
 import { useCart } from "@/context/CartContext";
-import { useCurrency } from "@/context/CurrencyContext";
 import { BRAND } from "@/lib/brand";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const { count } = useCart();
-  const { currency, toggleCurrency } = useCurrency();
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [signedIn, setSignedIn] = useState(false);
@@ -86,13 +84,6 @@ export default function Header() {
                 <path d="m21 21-4.3-4.3" />
               </svg>
             </Link>
-            <button
-              onClick={toggleCurrency}
-              className="focus-ring hidden sm:flex items-center gap-1 text-xs font-tag border border-line rounded-full px-2.5 py-1 text-ink-soft hover:border-ink hover:text-ink"
-              title="Switch currency (display only — you're always charged in PKR)"
-            >
-              {currency}
-            </button>
             <Link
               href={signedIn ? "/account" : "/account/login"}
               className="focus-ring hidden sm:block text-sm font-body text-ink-soft hover:text-ink"

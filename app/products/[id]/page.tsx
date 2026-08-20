@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import ProductHero from "@/components/ProductHero";
 import { getProductById, getProductsByCategory } from "@/lib/db";
+import { formatUSD } from "@/lib/currency";
 
 export const dynamic = "force-dynamic";
 
@@ -19,7 +20,7 @@ export async function generateMetadata({
 
   const description =
     product.description ||
-    `${product.name} — Rs ${product.price.toLocaleString()} at FetchWow. Worldwide delivery available.`;
+    `${product.name} — ${formatUSD(product.price)} at FetchWow. Worldwide delivery available.`;
 
   return {
     title: `${product.name} — FetchWow`,

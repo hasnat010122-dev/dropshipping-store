@@ -28,9 +28,9 @@ export default function TermsPage() {
 
       <h2>Pricing</h2>
       <p>
-        Prices are listed in Pakistani Rupees (Rs) unless stated otherwise
-        and may change without notice. The price shown at checkout is the
-        price you&apos;ll be charged.
+        Store prices are displayed in US dollars (USD) using an approximate
+        exchange rate and may change without notice. Bank-transfer settlement
+        instructions show the exact Pakistani Rupee (PKR) amount to send.
       </p>
 
       <h2>Order acceptance</h2>

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogOut, MapPin, Trash2, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { formatUSD } from "@/lib/currency";
 
 type Address = { id: string; label: string; address: string; city: string; phone: string };
 type User = { id: string; name: string; email: string; addresses: Address[] };
@@ -253,7 +254,7 @@ export default function AccountPage() {
                       {new Date(o.createdAt).toLocaleDateString()}
                     </span>
                     <span className="font-display text-ink">
-                      Rs {o.total.toLocaleString()}
+                      {formatUSD(o.total)}
                     </span>
                   </div>
                 </a>

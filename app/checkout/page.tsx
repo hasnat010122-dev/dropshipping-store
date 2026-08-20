@@ -426,12 +426,9 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span className="font-tag">{format(finalTotal)}</span>
               </div>
-              {format(finalTotal).startsWith("$") && (
-                <p className="text-[11px] text-ink-soft/50 font-body mb-5">
-                  You&apos;ll be charged Rs {finalTotal.toLocaleString()} — USD
-                  shown is approximate.
-                </p>
-              )}
+              <p className="text-[11px] text-ink-soft/50 font-body mb-5">
+                USD prices are approximate. For the bank transfer, send exactly Rs {finalTotal.toLocaleString()}.
+              </p>
               <button
                 type="submit"
                 form="checkout-form"
