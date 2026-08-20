@@ -158,25 +158,34 @@ export default function AdminProductsPage() {
       supplierCost: form.supplierCost ? Number(form.supplierCost) : null,
     };
 
-    const res = await fetch(
-      editingId ? `/api/products/${editingId}` : "/api/products",
-      {
-        method: editingId ? "PUT" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+    try {
+      const res = await fetch(
+        editingId ? `/api/products/${editingId}` : "/api/products",
+        {
+          method: editingId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+      const raw = await res.text();
+      let data: { error?: string } = {};
+      try {
+        data = raw ? JSON.parse(raw) : {};
+      } catch {
+        // Vercel may return plain text for an unexpected server error.
       }
-    );
-
-    if (res.ok) {
+      if (!res.ok) {
+        throw new Error(data.error || `Product could not be saved (HTTP ${res.status}).`);
+      }
       setMessage(editingId ? "Product updated ✓" : "Product added ✓");
       resetForm();
-      loadAll();
-    } else {
-      const data = await res.json();
-      setMessage(data.error || "Something went wrong — please try again.");
+      await loadAll();
+      setTimeout(() => setMessage(""), 3000);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Something went wrong — please try again.");
+    } finally {
+      setSaving(false);
     }
-    setSaving(false);
-    setTimeout(() => setMessage(""), 3000);
   }
 
   async function changePublication(id: string, publicationStatus: "draft" | "approved" | "published") {
