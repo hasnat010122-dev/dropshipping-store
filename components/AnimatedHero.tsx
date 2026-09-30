@@ -3,14 +3,14 @@
 import { motion } from "framer-motion";
 
 const tickerWords = [
-  "Tech",
   "Home",
-  "Fashion",
-  "Gadgets",
   "Kitchen",
   "Fitness",
-  "Gifts",
+  "Lifestyle",
+  "Décor",
+  "Essentials",
   "Trending",
+  "New In",
 ];
 
 export default function AnimatedHero() {

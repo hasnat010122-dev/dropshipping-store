@@ -538,10 +538,8 @@ export function getProductsForCollection(slug: string): ProductRow[] {
       return all.slice(0, 12);
     case "trending-now":
       return all.filter((p) => p.badge === "Trending");
-    case "gift-ideas":
-      return all.filter((p) => p.badge === "New" || p.badge === "Trending");
     default: {
-      // Match a plain category name, e.g. "tech" -> "Tech"
+      // Match a plain category name, e.g. "home" -> "Home"
       const label = slug.replace(/-/g, " ");
       return all.filter((p) => p.category.toLowerCase() === label);
     }
@@ -552,7 +550,6 @@ export function getCollectionTitle(slug: string): string {
   const titles: Record<string, string> = {
     "new-in": "New In",
     "trending-now": "Trending Now",
-    "gift-ideas": "Gift Ideas",
   };
   if (titles[slug]) return titles[slug];
   const label = slug.replace(/-/g, " ");

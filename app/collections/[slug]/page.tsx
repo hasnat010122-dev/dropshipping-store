@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { getProductsForCollection, getCollectionTitle } from "@/lib/db";
+import { removedCollectionSlugs } from "@/lib/products";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +14,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  if (removedCollectionSlugs.includes(slug)) return { title: "Not found" };
   const title = getCollectionTitle(slug);
   return {
     title: `${title} — Thundra International`,
@@ -25,6 +28,7 @@ export default async function CollectionPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  if (removedCollectionSlugs.includes(slug)) notFound();
   const products = await getProductsForCollection(slug);
   const title = getCollectionTitle(slug);
 
