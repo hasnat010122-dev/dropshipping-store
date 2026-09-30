@@ -1,10 +1,10 @@
-# FetchWow Supabase Setup
+# Thundra International Supabase Setup
 
 Never commit or send the database password, connection string, secret key, service-role key, Google secret, Resend key, Admin password or session secret.
 
 ## 1. Create the schema and Storage bucket
 
-1. Open the FetchWow Production project in Supabase.
+1. Open the Thundra International Production project in Supabase.
 2. Open **SQL Editor**.
 3. Select **New query**.
 4. Open `supabase/schema.sql` from this repository.

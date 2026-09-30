@@ -14,8 +14,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const title = getCollectionTitle(slug);
   return {
-    title: `${title} — FetchWow`,
-    description: `Shop ${title} at FetchWow — great finds, everyday prices.`,
+    title: `${title} — Thundra International`,
+    description: `Shop ${title} at Thundra International — great finds, everyday prices.`,
   };
 }
 

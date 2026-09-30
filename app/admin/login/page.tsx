@@ -33,8 +33,8 @@ export default function AdminLoginPage() {
         onSubmit={handleSubmit}
         className="bg-[#12121C] border border-white/[0.08] w-full max-w-sm p-8 rounded-2xl shadow-2xl"
       >
-        <p className="font-display text-2xl text-white mb-1">
-          FetchWow<span className="text-coral">.</span>
+        <p className="font-display text-xl sm:text-2xl text-white mb-1 leading-snug">
+          Thundra International<span className="text-coral">.</span>
         </p>
         <p className="text-sm text-white/40 mb-6">
           Owner login — enter your password to manage the store.

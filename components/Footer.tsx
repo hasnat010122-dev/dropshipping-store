@@ -36,7 +36,7 @@ export default function Footer() {
     <footer className="mt-24 bg-ink text-paper">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 py-14 grid grid-cols-2 md:grid-cols-5 gap-10">
         <div className="col-span-2">
-          <p className="font-display text-2xl mb-3">
+          <p className="font-display text-xl sm:text-2xl leading-snug mb-3">
             {BRAND.name}<span className="text-coral">.</span>
           </p>
           <p className="text-sm text-paper/60 max-w-xs font-body">
@@ -47,8 +47,8 @@ export default function Footer() {
             <span className="border border-paper/20 px-2 py-1">Bank account transfer</span>
           </div>
           <div className="mt-4 space-y-1 text-xs text-paper/60 font-body">
-            <p>Phone / WhatsApp: <a className="hover:text-marigold" href="https://wa.me/923086177169">03086177169</a></p>
-            <p>Email: <a className="hover:text-marigold" href="mailto:fetchwow1@gmail.com">fetchwow1@gmail.com</a></p>
+            <p>Phone / WhatsApp: <a className="hover:text-marigold" href={`https://wa.me/${BRAND.contactPhone.replace(/[^\d]/g, "").replace(/^0/, "92")}`}>{BRAND.contactPhone}</a></p>
+            <p>Email: <a className="hover:text-marigold" href={`mailto:${BRAND.contactEmail}`}>{BRAND.contactEmail}</a></p>
           </div>
         </div>
 

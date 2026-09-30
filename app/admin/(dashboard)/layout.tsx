@@ -43,10 +43,10 @@ export default function AdminLayout({
       {/* Sidebar */}
       <aside className="w-64 shrink-0 bg-[#0E0E16] border-r border-white/[0.06] flex flex-col fixed inset-y-0">
         <div className="h-16 flex items-center px-6 border-b border-white/[0.06]">
-          <p className="font-display text-xl text-white">
-            FetchWow<span className="text-coral">.</span>
+          <p className="font-display text-sm leading-tight text-white">
+            Thundra International<span className="text-coral">.</span>
           </p>
-          <span className="ml-2 text-[10px] font-tag uppercase tracking-widest text-white/30 border border-white/10 rounded px-1.5 py-0.5">
+          <span className="ml-2 shrink-0 text-[10px] font-tag uppercase tracking-widest text-white/30 border border-white/10 rounded px-1.5 py-0.5">
             Admin
           </span>
         </div>

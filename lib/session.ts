@@ -2,9 +2,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { getSessionSecret, secureCookieOptions } from "@/lib/security";
 
-export const SESSION_COOKIE = "fetchwow_customer_session";
-const SESSION_ISSUER = "fetchwow-store";
-const SESSION_AUDIENCE = "fetchwow-customer";
+export const SESSION_COOKIE = "thundra_customer_session";
+const SESSION_ISSUER = "thundra-store";
+const SESSION_AUDIENCE = "thundra-customer";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 30;
 
 export async function createSession(userId: string) {

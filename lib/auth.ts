@@ -2,9 +2,9 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { getSessionSecret, safeEqual, secureCookieOptions } from "@/lib/security";
 
-export const ADMIN_COOKIE = "fetchwow_admin_session";
-const ADMIN_ISSUER = "fetchwow-store";
-const ADMIN_AUDIENCE = "fetchwow-admin";
+export const ADMIN_COOKIE = "thundra_admin_session";
+const ADMIN_ISSUER = "thundra-store";
+const ADMIN_AUDIENCE = "thundra-admin";
 const ADMIN_MAX_AGE = 60 * 60 * 12;
 
 export async function verifyAdminPassword(password: unknown): Promise<boolean> {

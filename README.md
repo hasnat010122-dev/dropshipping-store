@@ -1,4 +1,4 @@
-# FetchWow Dropshipping Store
+# Thundra International Dropshipping Store
 
 A Next.js 16 storefront for approval-gated, zero-inventory worldwide dropshipping. The project includes customer verification, checkout, accounts, owner administration, product approval, order approval, supplier records, coupons, returns and activity history.
 
@@ -61,7 +61,7 @@ Environment variables:
 
 ```env
 RESEND_API_KEY=
-ORDER_EMAIL_FROM=FetchWow Orders <orders@send.fetchwow.online>
+ORDER_EMAIL_FROM=Thundra International Orders <orders@send.thundrainternational.com>
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 ```
