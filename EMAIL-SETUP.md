@@ -2,16 +2,25 @@
 
 The live API currently returns HTTP 503 because Vercel does not have a usable Resend configuration.
 
-## 1. Correct Hostinger DNS
+## 1. Resend sending domain DNS
 
-For the Resend sending domain `send.thundrainternational.com`, the current SPF and MX records are mistakenly published at `send.send.thundrainternational.com`.
+**The `send.send` DNS bug described here has already been fixed on the old domain and no
+longer applies.** Live checks confirm `send.fetchwow.online` now resolves correctly:
 
-In Hostinger DNS, change these two record names from `send.send` to `send`:
+- `TXT send.fetchwow.online` → `v=spf1 include:amazonses.com ~all`
+- `MX send.fetchwow.online` → `feedback-smtp.ap-northeast-1.amazonses.com` priority `10`
+- `TXT resend._domainkey.send.fetchwow.online` → `p=MIGfMA0GCSqGSIb3DQEBAQUAA4GN...`
+
+The store has since been rebranded to **Thundra International**, so the sending domain becomes
+`send.thundrainternational.com` and these three records must be created again on the new
+domain. See [`DOMAIN-DNS-SETUP.md`](./DOMAIN-DNS-SETUP.md) step 3 for the exact records and the
+Hostinger Name-field gotcha that caused the original `send.send` mistake.
+
+Records required, entered in Hostinger with the bare label only:
 
 - TXT, Name `send`, Value `v=spf1 include:amazonses.com ~all`
 - MX, Name `send`, Priority `10`, Value `feedback-smtp.ap-northeast-1.amazonses.com`
-
-Keep the existing DKIM TXT record because `resend._domainkey.send.thundrainternational.com` is resolving correctly.
+- TXT, Name `resend._domainkey.send`, Value the `p=MIGf...` key shown by Resend
 
 Return to Resend -> Domains and press Verify. Wait until the domain is Verified.
 
