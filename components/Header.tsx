@@ -149,6 +149,19 @@ export default function Header() {
               {c}
             </Link>
           ))}
+          <span aria-hidden className="shrink-0 w-px h-5 bg-line" />
+          <Link
+            href="/about"
+            className="focus-ring shrink-0 text-ink-soft hover:text-coral whitespace-nowrap"
+          >
+            About Us
+          </Link>
+          <Link
+            href="/contact"
+            className="focus-ring shrink-0 text-ink-soft hover:text-coral whitespace-nowrap"
+          >
+            Contact Us
+          </Link>
         </div>
       </div>
     </header>
