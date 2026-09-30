@@ -137,6 +137,6 @@ green.
 | Red *"DNS resource record is not valid or conflicts with another resource record"* in Hostinger | A record with the same Name already exists (Hostinger auto-creates `www` as a CNAME to the apex). Edit that row with the pencil or delete it; a CNAME name can hold only one record |
 | Vercel shows *No Configuration* | Records not added, or added at a different DNS host than Hostinger |
 | Browser still shows the parking page | DNS not propagated yet, or a cached record — retry on another network |
-| Resend stays *Not verified* | A record was entered as `send.send` or `resend._domainkey.send.send`; delete and re-add with the bare label |
+| Resend stays *Not verified* | A record was entered as `send.send` or `resend._domainkey.send.send`; delete and re-add with the bare label. Also check the DKIM row's **content**: it must be the `p=MIGf...` key copied from Resend, not the domain name |
 | 503 "Email service is not configured" | `RESEND_API_KEY` missing, or the Resend domain is not Verified |
 | Google sign-in returns `redirect_uri_mismatch` | The redirect URI in Google does not exactly match `https://thundrainternational.com/api/auth/google/callback` |
