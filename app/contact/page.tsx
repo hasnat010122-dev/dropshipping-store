@@ -1,11 +1,12 @@
 import { MessageCircle, Mail } from "lucide-react";
 import InfoPage from "@/components/InfoPage";
+import { BRAND } from "@/lib/brand";
 
 export const metadata = { title: "Contact Us — Thundra International" };
 
 export default function ContactPage() {
-  const whatsapp = process.env.NEXT_PUBLIC_STORE_WHATSAPP || "03086177169";
-  const email = process.env.NEXT_PUBLIC_STORE_EMAIL || "thundrain@gmail.com";
+  const whatsapp = BRAND.contactPhone;
+  const email = BRAND.contactEmail;
 
   return (
     <InfoPage title="Contact Us">
