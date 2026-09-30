@@ -13,7 +13,10 @@ Verified state at the time of writing:
 | `send.thundrainternational.com` | does not exist | Resend sending domain not set up |
 
 For comparison, the old domain is already correctly connected and can be used as a reference:
-`fetchwow.online` → `216.198.79.1`, and `send.fetchwow.online` resolves SPF + MX + DKIM.
+`fetchwow.online` → `216.198.79.1`, `www.fetchwow.online` CNAME →
+`2b6cc054bd5c2d95.vercel-dns-017.com`, and `send.fetchwow.online` resolves SPF + MX + DKIM.
+Because both domains attach to the same Vercel project, the new domain will very likely be
+issued the same two values — but the cards shown when you add the domain remain authoritative.
 
 ## 1. Get the exact values from Vercel
 
