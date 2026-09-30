@@ -23,7 +23,7 @@ const columns = [
   {
     title: BRAND.name,
     links: [
-      { label: "About", href: "/about" },
+      { label: "About Us", href: "/about" },
       { label: "Terms", href: "/terms" },
       { label: "Privacy", href: "/privacy" },
     ],

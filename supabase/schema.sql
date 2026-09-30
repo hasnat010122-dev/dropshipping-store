@@ -118,6 +118,14 @@ create table if not exists public.otp_codes (
   created_at timestamptz not null default now()
 );
 
+-- Editable storefront pages (About Us, Contact Us). One row per page slug.
+create table if not exists public.site_pages (
+  slug text primary key check (slug in ('about','contact')),
+  title text not null,
+  content text not null default '',
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists products_publication_idx on public.products(publication_status, created_at desc);
 create index if not exists products_category_idx on public.products(category);
 create index if not exists orders_user_idx on public.orders(user_id, created_at desc);
@@ -136,6 +144,7 @@ alter table public.coupons enable row level security;
 alter table public.returns enable row level security;
 alter table public.activities enable row level security;
 alter table public.otp_codes enable row level security;
+alter table public.site_pages enable row level security;
 
 -- Public product images are readable by URL, but uploads/deletes are server-only.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)

@@ -1,19 +1,21 @@
 import { MessageCircle, Mail } from "lucide-react";
 import InfoPage from "@/components/InfoPage";
+import PageParagraphs from "@/components/PageParagraphs";
+import { getSitePage } from "@/lib/db";
 import { BRAND } from "@/lib/brand";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = { title: "Contact Us — Thundra International" };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const page = await getSitePage("contact");
   const whatsapp = BRAND.contactPhone;
   const email = BRAND.contactEmail;
 
   return (
-    <InfoPage title="Contact Us">
-      <p>
-        Got a question about an order, a product, or anything else? Reach us
-        directly — we usually reply fastest on WhatsApp.
-      </p>
+    <InfoPage title={page.title || "Contact Us"}>
+      <PageParagraphs content={page.content} />
 
       <div className="not-prose grid sm:grid-cols-2 gap-4 mt-8">
         {whatsapp ? (

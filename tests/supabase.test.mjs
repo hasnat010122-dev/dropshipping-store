@@ -18,7 +18,7 @@ test("Supabase credentials remain server-only", () => {
 
 test("production schema protects all store tables with RLS", () => {
   const sql = read("supabase/schema.sql");
-  for (const table of ["products", "suppliers", "users", "orders", "coupons", "returns", "activities", "otp_codes"]) {
+  for (const table of ["products", "suppliers", "users", "orders", "coupons", "returns", "activities", "otp_codes", "site_pages"]) {
     assert.ok(sql.includes(`create table if not exists public.${table}`), `missing ${table}`);
     assert.ok(sql.includes(`alter table public.${table} enable row level security`), `RLS missing for ${table}`);
   }

@@ -18,6 +18,7 @@ const activityIcons: Record<string, string> = {
   coupon_added: "🏷️",
   coupon_updated: "🏷️",
   coupon_deleted: "🏷️",
+  page_updated: "📄",
 };
 
 export default async function AdminActivityPage() {
