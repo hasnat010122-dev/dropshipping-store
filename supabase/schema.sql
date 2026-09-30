@@ -1,4 +1,4 @@
--- FetchWow production schema
+-- Thundra International production schema
 -- Run once in Supabase Dashboard -> SQL Editor -> New query.
 
 create extension if not exists pgcrypto;
@@ -126,7 +126,7 @@ create index if not exists activities_created_idx on public.activities(created_a
 create index if not exists otp_email_idx on public.otp_codes(email, created_at desc);
 create index if not exists returns_order_idx on public.returns(order_id);
 
--- Browser clients receive no direct table access. FetchWow's Next.js server uses
+-- Browser clients receive no direct table access. Thundra International's Next.js server uses
 -- the secret server key and exposes only validated/redacted API responses.
 alter table public.products enable row level security;
 alter table public.suppliers enable row level security;

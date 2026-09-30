@@ -1,12 +1,12 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "About — FetchWow" };
+export const metadata = { title: "About — Thundra International" };
 
 export default function AboutPage() {
   return (
-    <InfoPage title="About FetchWow">
+    <InfoPage title="About Thundra International">
       <p>
-        FetchWow is a store for the things you didn&apos;t know you needed until
+        Thundra International is a store for the things you didn&apos;t know you needed until
         you saw them — curated finds at honest prices, shipped to customers
         all over the world.
       </p>
@@ -17,7 +17,7 @@ export default function AboutPage() {
       </p>
       <p className="text-sm text-ink-soft/60">
         (Store owner: replace this with your own story once you&apos;re ready
-        — a bit about why you started FetchWow goes a long way for building
+        — a bit about why you started Thundra International goes a long way for building
         trust with new customers.)
       </p>
     </InfoPage>

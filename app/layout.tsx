@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
   ),
   title: {
-    default: "FetchWow — Great finds, everyday prices",
+    default: "Thundra International — Great finds, everyday prices",
     template: "%s",
   },
   description:
-    "FetchWow is a store for the things you didn't know you needed until you saw them. Worldwide delivery for great finds at everyday prices.",
+    "Thundra International is a store for the things you didn't know you needed until you saw them. Worldwide delivery for great finds at everyday prices.",
   openGraph: {
-    siteName: "FetchWow",
+    siteName: "Thundra International",
     type: "website",
   },
 };

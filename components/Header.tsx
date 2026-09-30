@@ -34,7 +34,7 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="focus-ring font-display text-2xl font-700 tracking-tight text-ink"
+            className="focus-ring font-display text-lg sm:text-xl lg:text-2xl font-700 tracking-tight text-ink whitespace-nowrap leading-tight"
           >
             {BRAND.name}<span className="text-coral">.</span>
           </Link>

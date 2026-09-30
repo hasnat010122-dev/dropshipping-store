@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   });
 
   const response = NextResponse.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
-  response.cookies.set("fetchwow_oauth_state", state, secureCookieOptions(10 * 60));
-  response.cookies.set("fetchwow_oauth_returnto", returnTo, secureCookieOptions(10 * 60));
+  response.cookies.set("thundra_oauth_state", state, secureCookieOptions(10 * 60));
+  response.cookies.set("thundra_oauth_returnto", returnTo, secureCookieOptions(10 * 60));
   return response;
 }

@@ -1,5 +1,5 @@
 export const BRAND = {
-  name: "FetchWow",
+  name: "Thundra International",
   tagline: "Great finds, everyday prices",
-  domain: "fetchwow.online",
+  domain: "thundrainternational.com",
 } as const;

@@ -11,13 +11,13 @@ Official documentation: https://resend.com/docs
 Use a dedicated subdomain such as:
 
 ```text
-send.fetchwow.online
+send.thundrainternational.com
 ```
 
 A subdomain separates transactional-email reputation from the root website domain. Your sender can then be:
 
 ```text
-FetchWow Orders <orders@send.fetchwow.online>
+Thundra International Orders <orders@send.thundrainternational.com>
 ```
 
 ### A2. Add and verify the domain
@@ -42,7 +42,7 @@ Do not guess DNS values; use the exact records displayed in your own Resend dash
 
 ```env
 RESEND_API_KEY=replace-locally
-ORDER_EMAIL_FROM=FetchWow Orders <orders@send.fetchwow.online>
+ORDER_EMAIL_FROM=Thundra International Orders <orders@send.thundrainternational.com>
 ```
 
 Restart `npm run dev` after changing `.env.local`.
@@ -103,17 +103,17 @@ Restart `npm run dev`, open `/account/login`, and test **Continue with Google**.
 After the final domain is connected, update:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://fetchwow.online
+NEXT_PUBLIC_SITE_URL=https://thundrainternational.com
 ```
 
 Add to the same Google Web client:
 
 ```text
 Authorized JavaScript origin:
-https://fetchwow.online
+https://thundrainternational.com
 
 Authorized redirect URI:
-https://fetchwow.online/api/auth/google/callback
+https://thundrainternational.com/api/auth/google/callback
 ```
 
 Keep localhost entries for local development if desired.

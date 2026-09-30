@@ -1,6 +1,6 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "Privacy Policy — FetchWow" };
+export const metadata = { title: "Privacy Policy — Thundra International" };
 
 export default function PrivacyPage() {
   return (

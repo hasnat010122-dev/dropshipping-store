@@ -1,6 +1,6 @@
 import InfoPage from "@/components/InfoPage";
 
-export const metadata = { title: "Shipping & Delivery — FetchWow" };
+export const metadata = { title: "Shipping & Delivery — Thundra International" };
 
 export default function ShippingPage() {
   return (

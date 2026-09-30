@@ -5,15 +5,15 @@ import { safeInternalPath } from "@/lib/security";
 
 function loginRedirect(req: NextRequest, error: string) {
   const response = NextResponse.redirect(new URL(`/account/login?error=${error}`, req.url));
-  response.cookies.set("fetchwow_oauth_state", "", { path: "/", maxAge: 0 });
-  response.cookies.set("fetchwow_oauth_returnto", "", { path: "/", maxAge: 0 });
+  response.cookies.set("thundra_oauth_state", "", { path: "/", maxAge: 0 });
+  response.cookies.set("thundra_oauth_returnto", "", { path: "/", maxAge: 0 });
   return response;
 }
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
   const state = req.nextUrl.searchParams.get("state");
-  const savedState = req.cookies.get("fetchwow_oauth_state")?.value;
+  const savedState = req.cookies.get("thundra_oauth_state")?.value;
   const clientId = process.env.GOOGLE_CLIENT_ID?.trim();
   const clientSecret = process.env.GOOGLE_CLIENT_SECRET?.trim();
   if (!code || !state || state !== savedState || !clientId || !clientSecret) {
@@ -50,10 +50,10 @@ export async function GET(req: NextRequest) {
 
     const user = await findOrCreateUser(profile.email, profile.name || profile.email.split("@")[0], "google");
     await createSession(user.id);
-    const returnTo = safeInternalPath(req.cookies.get("fetchwow_oauth_returnto")?.value, "/account");
+    const returnTo = safeInternalPath(req.cookies.get("thundra_oauth_returnto")?.value, "/account");
     const response = NextResponse.redirect(new URL(returnTo, req.nextUrl.origin));
-    response.cookies.set("fetchwow_oauth_state", "", { path: "/", maxAge: 0 });
-    response.cookies.set("fetchwow_oauth_returnto", "", { path: "/", maxAge: 0 });
+    response.cookies.set("thundra_oauth_state", "", { path: "/", maxAge: 0 });
+    response.cookies.set("thundra_oauth_returnto", "", { path: "/", maxAge: 0 });
     return response;
   } catch (error) {
     console.error("Google OAuth callback failed", error);

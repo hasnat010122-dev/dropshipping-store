@@ -16,14 +16,14 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const product = await getProductById(id);
-  if (!product) return { title: "Product not found — FetchWow" };
+  if (!product) return { title: "Product not found — Thundra International" };
 
   const description =
     product.description ||
-    `${product.name} — ${formatUSD(product.price)} at FetchWow. Worldwide delivery available.`;
+    `${product.name} — ${formatUSD(product.price)} at Thundra International. Worldwide delivery available.`;
 
   return {
-    title: `${product.name} — FetchWow`,
+    title: `${product.name} — Thundra International`,
     description,
     openGraph: {
       title: product.name,
