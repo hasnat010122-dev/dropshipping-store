@@ -36,9 +36,11 @@ hPanel → **Domains** → `thundrainternational.com` → **DNS / Nameservers** 
 
 **Delete the parking record first.** There is an existing `A` record on `@` pointing at
 `2.57.91.91`. If it is left in place alongside Vercel's, traffic splits between the parking
-page and the store, and Vercel keeps reporting *Invalid Configuration*. Also delete any
-auto-created `A` record on `www` — `www` must be a CNAME, and two records on the same host
-cause intermittent failures.
+page and the store, and Vercel keeps reporting *Invalid Configuration*. Hostinger also
+auto-creates a `CNAME` on `www` pointing back at the apex (`thundrainternational.com`); delete
+it or edit it in place, because adding a second record on `www` fails with the red error
+*"DNS resource record is not valid or conflicts with another resource record"*. Two competing
+records on the same hostname cause intermittent failures.
 
 Then add:
 
@@ -131,7 +133,8 @@ green.
 
 | Symptom | Cause |
 | --- | --- |
-| Vercel shows *Invalid Configuration* | The parking `A` record on `@` still exists, or `www` has an `A` record instead of a CNAME |
+| Vercel shows *Invalid Configuration* | The parking `A` record on `@` still exists, or the auto-created `www` CNAME still points at the apex |
+| Red *"DNS resource record is not valid or conflicts with another resource record"* in Hostinger | A record with the same Name already exists (Hostinger auto-creates `www` as a CNAME to the apex). Edit that row with the pencil or delete it; a CNAME name can hold only one record |
 | Vercel shows *No Configuration* | Records not added, or added at a different DNS host than Hostinger |
 | Browser still shows the parking page | DNS not propagated yet, or a cached record — retry on another network |
 | Resend stays *Not verified* | A record was entered as `send.send` or `resend._domainkey.send.send`; delete and re-add with the bare label |
