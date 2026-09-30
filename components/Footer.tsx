@@ -8,9 +8,7 @@ const columns = [
     links: [
       { label: "New In", href: "/collections/new-in" },
       { label: "Trending", href: "/collections/trending-now" },
-      { label: "Tech", href: "/collections/tech" },
       { label: "Home", href: "/collections/home" },
-      { label: "Fashion", href: "/collections/fashion" },
     ],
   },
   {
@@ -25,7 +23,7 @@ const columns = [
   {
     title: BRAND.name,
     links: [
-      { label: "About", href: "/about" },
+      { label: "About Us", href: "/about" },
       { label: "Terms", href: "/terms" },
       { label: "Privacy", href: "/privacy" },
     ],

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import crypto from "crypto";
 import { v4 as uuid } from "uuid";
+import { DEFAULT_SITE_PAGES, SITE_PAGE_SLUGS, type SitePageSlug } from "@/lib/site-pages";
 
 const dataDir = path.join(process.cwd(), "data");
 const productsFile = path.join(dataDir, "products.json");
@@ -12,6 +13,7 @@ const returnsFile = path.join(dataDir, "returns.json");
 const couponsFile = path.join(dataDir, "coupons.json");
 const usersFile = path.join(dataDir, "users.json");
 const otpFile = path.join(dataDir, "otp_codes.json");
+const pagesFile = path.join(dataDir, "pages.json");
 
 export type ProductRow = {
   id: string;
@@ -115,7 +117,8 @@ export type ActivityType =
   | "return_status_changed"
   | "coupon_added"
   | "coupon_updated"
-  | "coupon_deleted";
+  | "coupon_deleted"
+  | "page_updated";
 
 export type ActivityRow = {
   id: string;
@@ -260,6 +263,15 @@ function ensureDataFiles() {
   if (!fs.existsSync(couponsFile)) fs.writeFileSync(couponsFile, JSON.stringify([], null, 2));
   if (!fs.existsSync(usersFile)) fs.writeFileSync(usersFile, JSON.stringify([], null, 2));
   if (!fs.existsSync(otpFile)) fs.writeFileSync(otpFile, JSON.stringify([], null, 2));
+  if (!fs.existsSync(pagesFile)) {
+    const seed = SITE_PAGE_SLUGS.map((slug) => ({
+      slug,
+      title: DEFAULT_SITE_PAGES[slug].title,
+      content: DEFAULT_SITE_PAGES[slug].content,
+      updatedAt: new Date().toISOString(),
+    }));
+    fs.writeFileSync(pagesFile, JSON.stringify(seed, null, 2));
+  }
 }
 
 function readJSON<T>(file: string): T {
@@ -520,6 +532,52 @@ export function deleteSupplier(id: string) {
   if (target) logActivity("supplier_deleted", `Deleted supplier "${target.name}"`);
 }
 
+// ---------- Editable site pages (About Us, Contact Us) ----------
+
+export type SitePageRow = {
+  slug: SitePageSlug;
+  title: string;
+  content: string;
+  updatedAt: string;
+};
+
+export function getAllSitePages(): SitePageRow[] {
+  const rows = readJSON<SitePageRow[]>(pagesFile);
+  // Keep the canonical slug order and fill in any missing defaults.
+  return SITE_PAGE_SLUGS.map((slug) => {
+    const row = rows.find((p) => p.slug === slug);
+    return row || {
+      slug,
+      title: DEFAULT_SITE_PAGES[slug].title,
+      content: DEFAULT_SITE_PAGES[slug].content,
+      updatedAt: new Date().toISOString(),
+    };
+  });
+}
+
+export function getSitePage(slug: SitePageSlug): SitePageRow {
+  return getAllSitePages().find((p) => p.slug === slug)!;
+}
+
+export function updateSitePage(
+  slug: SitePageSlug,
+  data: Pick<SitePageRow, "title" | "content">
+): SitePageRow {
+  const rows = readJSON<SitePageRow[]>(pagesFile);
+  const row: SitePageRow = {
+    slug,
+    title: data.title.trim() || DEFAULT_SITE_PAGES[slug].title,
+    content: data.content.replace(/\r\n/g, "\n").trim(),
+    updatedAt: new Date().toISOString(),
+  };
+  const idx = rows.findIndex((p) => p.slug === slug);
+  if (idx === -1) rows.push(row);
+  else rows[idx] = row;
+  writeJSON(pagesFile, rows);
+  logActivity("page_updated", `Updated the "${row.title}" page content`);
+  return row;
+}
+
 export function searchProducts(query: string): ProductRow[] {
   const q = query.trim().toLowerCase();
   if (!q) return [];
@@ -538,10 +596,8 @@ export function getProductsForCollection(slug: string): ProductRow[] {
       return all.slice(0, 12);
     case "trending-now":
       return all.filter((p) => p.badge === "Trending");
-    case "gift-ideas":
-      return all.filter((p) => p.badge === "New" || p.badge === "Trending");
     default: {
-      // Match a plain category name, e.g. "tech" -> "Tech"
+      // Match a plain category name, e.g. "home" -> "Home"
       const label = slug.replace(/-/g, " ");
       return all.filter((p) => p.category.toLowerCase() === label);
     }
@@ -552,7 +608,6 @@ export function getCollectionTitle(slug: string): string {
   const titles: Record<string, string> = {
     "new-in": "New In",
     "trending-now": "Trending Now",
-    "gift-ideas": "Gift Ideas",
   };
   if (titles[slug]) return titles[slug];
   const label = slug.replace(/-/g, " ");

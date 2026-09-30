@@ -7,14 +7,16 @@ export type {
   ProductRow, PublicProductRow, OrderItem, FulfillmentStatus, OrderRow,
   CustomerOrderRow, SupplierRow, ActivityType, ActivityRow,
   ReturnRequestStatus, ReturnRequestRow, CouponRow, CouponValidationResult,
-  Address, UserRow, OtpCodeRow,
+  Address, UserRow, OtpCodeRow, SitePageRow,
 } from "@/lib/local-db";
 
 import type {
   ProductRow, OrderRow, SupplierRow, ActivityType, ActivityRow,
   ReturnRequestStatus, ReturnRequestRow, CouponRow, CouponValidationResult,
-  Address, UserRow,
+  Address, UserRow, SitePageRow,
 } from "@/lib/local-db";
+import { DEFAULT_SITE_PAGES } from "@/lib/site-pages";
+import type { SitePageSlug } from "@/lib/site-pages";
 
 export const toPublicProduct = local.toPublicProduct;
 export const toCustomerOrder = local.toCustomerOrder;
@@ -122,7 +124,7 @@ export async function deleteProduct(id: string) {
 export async function searchProducts(query: string) { const q = query.trim().toLowerCase(); return q ? (await getAllProducts()).filter((p) => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q) || (p.description || "").toLowerCase().includes(q)) : []; }
 export async function getProductsForCollection(slug: string) {
   const all = await getAllProducts();
-  if (slug === "new-in") return all.slice(0, 12); if (slug === "trending-now") return all.filter((p) => p.badge === "Trending"); if (slug === "gift-ideas") return all.filter((p) => p.badge === "New" || p.badge === "Trending");
+  if (slug === "new-in") return all.slice(0, 12); if (slug === "trending-now") return all.filter((p) => p.badge === "Trending");
   const label = slug.replace(/-/g, " "); return all.filter((p) => p.category.toLowerCase() === label);
 }
 
@@ -157,6 +159,37 @@ export async function getSupplierById(id: string) { if (!isSupabaseConfigured())
 export async function createSupplier(data: Omit<SupplierRow, "id" | "createdAt">) { if (!isSupabaseConfigured()) return local.createSupplier(data); const row = { ...data, id: crypto.randomUUID(), createdAt: new Date().toISOString() }; const { error } = await getSupabaseAdmin().from("suppliers").insert(supplierTo(row)); assertNoSupabaseError(error, "Create supplier"); await logActivity("supplier_added", `Added supplier "${row.name}"`); return row; }
 export async function updateSupplier(id: string, data: Omit<SupplierRow, "id" | "createdAt">) { if (!isSupabaseConfigured()) return local.updateSupplier(id, data); const existing = await getSupplierById(id); if (!existing) return undefined; const row = { ...existing, ...data }; const { error } = await getSupabaseAdmin().from("suppliers").update(supplierTo(row)).eq("id", id); assertNoSupabaseError(error, "Update supplier"); await logActivity("supplier_updated", `Updated supplier "${row.name}"`); return row; }
 export async function deleteSupplier(id: string) { if (!isSupabaseConfigured()) return local.deleteSupplier(id); const existing = await getSupplierById(id); const { error } = await getSupabaseAdmin().from("suppliers").delete().eq("id", id); assertNoSupabaseError(error, "Delete supplier"); if (existing) await logActivity("supplier_deleted", `Deleted supplier "${existing.name}"`); }
+
+function sitePageFrom(row: Record<string, any>): SitePageRow { return { slug: row.slug, title: row.title, content: row.content, updatedAt: row.updated_at }; }
+// True when the site_pages table hasn't been created yet (migration not run).
+// The storefront then falls back to the built-in default copy instead of erroring.
+function isMissingTableError(error: { message?: string } | null): boolean {
+  const message = (error?.message || "").toLowerCase();
+  return message.includes("pgrst205") || message.includes("42p01") || message.includes("does not exist") || message.includes("could not find the table");
+}
+function defaultSitePage(slug: SitePageSlug): SitePageRow { const fallback = DEFAULT_SITE_PAGES[slug]; return { slug, title: fallback.title, content: fallback.content, updatedAt: new Date().toISOString() }; }
+export async function getAllSitePages(): Promise<SitePageRow[]> {
+  if (!isSupabaseConfigured()) return local.getAllSitePages();
+  const { data, error } = await getSupabaseAdmin().from("site_pages").select("*");
+  if (isMissingTableError(error)) return (Object.keys(DEFAULT_SITE_PAGES) as SitePageSlug[]).map(defaultSitePage);
+  assertNoSupabaseError(error, "Read site pages");
+  const stored = (data || []).map(sitePageFrom);
+  return (Object.keys(DEFAULT_SITE_PAGES) as SitePageSlug[]).map((slug) => stored.find((p) => p.slug === slug) || { slug, title: DEFAULT_SITE_PAGES[slug].title, content: DEFAULT_SITE_PAGES[slug].content, updatedAt: new Date().toISOString() });
+}
+export async function getSitePage(slug: SitePageSlug): Promise<SitePageRow> {
+  if (!isSupabaseConfigured()) return local.getSitePage(slug);
+  const { data, error } = await getSupabaseAdmin().from("site_pages").select("*").eq("slug", slug).maybeSingle();
+  if (isMissingTableError(error)) return defaultSitePage(slug);
+  assertNoSupabaseError(error, "Read site page");
+  return data ? sitePageFrom(data) : defaultSitePage(slug);
+}
+export async function updateSitePage(slug: SitePageSlug, data: Pick<SitePageRow, "title" | "content">): Promise<SitePageRow> {
+  if (!isSupabaseConfigured()) return local.updateSitePage(slug, data);
+  const row = { slug, title: data.title.trim() || DEFAULT_SITE_PAGES[slug].title, content: data.content.replace(/\r\n/g, "\n").trim(), updated_at: new Date().toISOString() };
+  const { error } = await getSupabaseAdmin().from("site_pages").upsert(row); assertNoSupabaseError(error, "Update site page");
+  await logActivity("page_updated", `Updated the "${row.title}" page content`);
+  return { slug, title: row.title, content: row.content, updatedAt: row.updated_at };
+}
 
 export async function getAllReturnRequests(): Promise<ReturnRequestRow[]> { if (!isSupabaseConfigured()) return local.getAllReturnRequests(); return (await rows("returns")).map(returnFrom); }
 export async function getReturnRequestById(id: string) { if (!isSupabaseConfigured()) return local.getReturnRequestById(id); const { data, error } = await getSupabaseAdmin().from("returns").select("*").eq("id", id).maybeSingle(); assertNoSupabaseError(error, "Read return"); return data ? returnFrom(data) : undefined; }

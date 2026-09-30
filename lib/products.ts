@@ -86,9 +86,10 @@ export const products: Product[] = [
 
 export const categories = [
   "New In",
-  "Tech",
   "Home",
-  "Fashion",
   "Trending Now",
-  "Gift Ideas",
 ];
+
+// Slugs whose dedicated collection pages were removed from the store.
+// Requests to /collections/<slug> for these now return a 404.
+export const removedCollectionSlugs = ["tech", "fashion", "gift-ideas"];
