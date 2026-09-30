@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { BRAND } from "@/lib/brand";
 
@@ -36,9 +37,18 @@ export default function Footer() {
     <footer className="mt-24 bg-ink text-paper">
       <div className="max-w-7xl mx-auto px-5 sm:px-8 py-14 grid grid-cols-2 md:grid-cols-5 gap-10">
         <div className="col-span-2">
-          <p className="font-display text-xl sm:text-2xl leading-snug mb-3">
-            {BRAND.name}<span className="text-coral">.</span>
-          </p>
+          <div className="flex items-center gap-2.5 mb-3">
+            <Image
+              src="/brand/logo-mark.png"
+              alt=""
+              width={29}
+              height={40}
+              className="h-9 w-auto"
+            />
+            <span className="font-display text-xl sm:text-2xl leading-snug text-paper">
+              {BRAND.name}
+            </span>
+          </div>
           <p className="text-sm text-paper/60 max-w-xs font-body">
             Great finds, everyday prices. Delivered to customers all over the
             world.

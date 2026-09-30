@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -34,9 +35,16 @@ export default function Header() {
         <div className="flex items-center justify-between h-16">
           <Link
             href="/"
-            className="focus-ring font-display text-lg sm:text-xl lg:text-2xl font-700 tracking-tight text-ink whitespace-nowrap leading-tight"
+            aria-label={BRAND.name}
+            className="focus-ring flex items-center shrink-0"
           >
-            {BRAND.name}<span className="text-coral">.</span>
+            <Image
+              src="/brand/logo-horizontal-light.png"
+              alt={BRAND.name}
+              width={948}
+              height={144}
+              className="h-7 w-auto sm:h-8 lg:h-9"
+            />
           </Link>
 
           <div className="hidden md:flex items-center flex-1 max-w-md mx-8">

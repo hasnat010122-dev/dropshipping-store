@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { BRAND } from "@/lib/brand";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -33,8 +35,15 @@ export default function AdminLoginPage() {
         onSubmit={handleSubmit}
         className="bg-[#12121C] border border-white/[0.08] w-full max-w-sm p-8 rounded-2xl shadow-2xl"
       >
+        <Image
+          src="/brand/logo-mark.png"
+          alt={BRAND.name}
+          width={29}
+          height={40}
+          className="h-11 w-auto mb-4"
+        />
         <p className="font-display text-xl sm:text-2xl text-white mb-1 leading-snug">
-          Thundra International<span className="text-coral">.</span>
+          {BRAND.name}
         </p>
         <p className="text-sm text-white/40 mb-6">
           Owner login — enter your password to manage the store.
