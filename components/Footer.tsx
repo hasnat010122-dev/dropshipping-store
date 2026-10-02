@@ -48,12 +48,8 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-sm text-paper/60 max-w-xs font-body">
-            Great finds, everyday prices. Delivered to customers all over the
-            world.
+            Great finds, everyday prices.
           </p>
-          <div className="flex gap-3 mt-5 font-tag text-xs flex-wrap">
-            <span className="border border-paper/20 px-2 py-1">Bank account transfer</span>
-          </div>
           <div className="mt-4 space-y-1 text-xs text-paper/60 font-body">
             <p>Phone / WhatsApp: <a className="hover:text-marigold" href={`https://wa.me/${BRAND.contactPhone.replace(/[^\d]/g, "").replace(/^0/, "92")}`}>{BRAND.contactPhone}</a></p>
             <p>Email: <a className="hover:text-marigold" href={`mailto:${BRAND.contactEmail}`}>{BRAND.contactEmail}</a></p>

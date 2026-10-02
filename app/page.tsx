@@ -15,16 +15,6 @@ export default async function Home() {
       <main className="flex-1">
         <AnimatedHero />
 
-        {/* Trust strip */}
-        <section className="border-b border-line bg-paper-dim">
-          <div className="max-w-7xl mx-auto px-5 sm:px-8 py-4 flex flex-wrap gap-x-10 gap-y-2 justify-center sm:justify-between text-sm font-tag text-ink-soft">
-            <span>🚚 Worldwide delivery</span>
-            <span>💳 Secure bank account transfer</span>
-            <span>↩︎ 7-day easy returns</span>
-            <span>🌍 Order from anywhere</span>
-          </div>
-        </section>
-
         {/* Product grid */}
         <section id="shop" className="max-w-7xl mx-auto px-5 sm:px-8 py-20">
           <div className="flex items-end justify-between mb-10">
