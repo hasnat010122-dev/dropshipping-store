@@ -2,17 +2,6 @@
 
 import { motion } from "framer-motion";
 
-const tickerWords = [
-  "Home",
-  "Kitchen",
-  "Fitness",
-  "Lifestyle",
-  "Décor",
-  "Essentials",
-  "Trending",
-  "New In",
-];
-
 export default function AnimatedHero() {
   return (
     <section className="relative border-b border-line bg-paper overflow-hidden">
@@ -61,8 +50,7 @@ export default function AnimatedHero() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="mt-6 max-w-lg text-ink-soft font-body text-lg"
         >
-          Curated finds, honest prices. Delivered to customers all over the
-          world.
+          Curated finds, honest prices.
         </motion.p>
 
         <motion.div
@@ -88,21 +76,6 @@ export default function AnimatedHero() {
             See what&apos;s trending
           </motion.a>
         </motion.div>
-      </div>
-
-      {/* Marquee ticker */}
-      <div className="relative border-t border-line overflow-hidden bg-ink py-3">
-        <div className="marquee-track">
-          {[...tickerWords, ...tickerWords].map((w, i) => (
-            <span
-              key={i}
-              className="font-display text-lg text-paper px-6 whitespace-nowrap flex items-center gap-6"
-            >
-              {w}
-              <span className="text-marigold">✦</span>
-            </span>
-          ))}
-        </div>
       </div>
     </section>
   );

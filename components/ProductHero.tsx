@@ -120,8 +120,6 @@ export default function ProductHero({
         <AddToCartBox product={product} selectedColor={selectedColor} selectedImage={selectedImage} />
 
         <div className="border-t border-line pt-6 space-y-3 text-sm font-body text-ink-soft">
-          <p>🚚 Worldwide delivery available</p>
-          <p>💳 Pay securely by bank account transfer</p>
           <p>↩︎ 7-day return window, no questions asked</p>
         </div>
       </motion.div>
