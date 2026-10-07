@@ -147,12 +147,9 @@ export default function CartPage() {
                 We'll ask you to verify your email or Google account next —
                 takes a few seconds.
               </p>
-              {format(total).startsWith("$") && (
-                <p className="text-[11px] text-ink-soft/50 font-body mt-2 text-center">
-                  Prices shown in USD are approximate — you&apos;ll be
-                  charged in PKR.
-                </p>
-              )}
+              <p className="text-[11px] text-ink-soft/50 font-body mt-2 text-center">
+                All prices are in Pakistani Rupees (PKR). Cash on Delivery is available.
+              </p>
             </div>
           </div>
         )}

@@ -28,9 +28,12 @@ export default function TermsPage() {
 
       <h2>Pricing</h2>
       <p>
-        Store prices are displayed in US dollars (USD) using an approximate
-        exchange rate and may change without notice. Bank-transfer settlement
-        instructions show the exact Pakistani Rupee (PKR) amount to send.
+        All prices on the store are listed and charged in Pakistani Rupees (PKR). Prices are final at the time of order placement.
+      </p>
+
+      <h2>Payment — Cash on Delivery</h2>
+      <p>
+        We accept Cash on Delivery (COD). Please keep the exact order total in cash ready to hand to our delivery agent when your parcel arrives. Orders without a payable recipient at the provided address may be returned and cancelled.
       </p>
 
       <h2>Order acceptance</h2>

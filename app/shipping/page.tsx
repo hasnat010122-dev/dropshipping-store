@@ -21,11 +21,16 @@ export default function ShippingPage() {
         </li>
       </ul>
 
-      <h2>Shipping costs</h2>
+      <h2>Shipping costs & payment</h2>
       <p>
-        Delivery cost is calculated at checkout based on your destination and order
-        size. We&apos;ll always show you the total before you confirm your
-        order — no surprise charges.
+        All prices on our store are shown in Pakistani Rupees (PKR). We offer
+        Cash on Delivery (COD) nationwide — pay the total order amount in cash
+        directly to our delivery agent when your parcel arrives. There are no
+        advance payments or hidden bank-transfer fees.
+      </p>
+      <p>
+        Delivery is free across Pakistan. We&apos;ll always show you the final
+        total before you confirm your order — no surprise charges.
       </p>
 
       <h2>Tracking your order</h2>

@@ -4,8 +4,11 @@ import { isAdmin } from "@/lib/auth";
 import { getSessionUserId } from "@/lib/session";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { cleanText } from "@/lib/security";
+import { COD } from "@/lib/payment";
 
-const PAYMENT_METHODS = new Set(["bank_transfer"]);
+// Accept COD. Keep accepting legacy "bank_transfer" IDs so existing
+// draft/session orders created before the switch still submit cleanly.
+const PAYMENT_METHODS = new Set([COD.id, "bank_transfer"]);
 
 export async function GET() {
   if (!(await isAdmin())) return NextResponse.json({ error: "Not allowed" }, { status: 401 });

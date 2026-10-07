@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Pencil, Trash2, X, Plus } from "lucide-react";
 import type { ProductRow, SupplierRow } from "@/lib/db";
-import { formatUSD, pkrToUsd, usdToPkr } from "@/lib/currency";
+import { formatPKR } from "@/lib/currency";
 
 const CATEGORIES = ["Tech", "Home", "Fashion", "Beauty", "Other"];
 const BADGES = ["None", "New", "Trending", "Bestseller"];
@@ -78,8 +78,8 @@ export default function AdminProductsPage() {
   function startEdit(p: ProductRow) {
     setForm({
       name: p.name,
-      price: pkrToUsd(p.price).toFixed(2),
-      compareAt: p.compareAt ? pkrToUsd(p.compareAt).toFixed(2) : "",
+      price: String(p.price),
+      compareAt: p.compareAt ? String(p.compareAt) : "",
       category: p.category,
       badge: p.badge || "None",
       image: p.image,
@@ -90,7 +90,7 @@ export default function AdminProductsPage() {
       stock: String(p.stock),
       supplierId: p.supplierId || "",
       supplierProductUrl: p.supplierProductUrl || "",
-      supplierCost: p.supplierCost ? pkrToUsd(p.supplierCost).toFixed(2) : "",
+      supplierCost: p.supplierCost ? String(p.supplierCost) : "",
     });
     setEditingId(p.id);
     formTopRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -164,8 +164,8 @@ export default function AdminProductsPage() {
     setSaving(true);
     const payload = {
       name: form.name,
-      price: usdToPkr(Number(form.price)),
-      compareAt: form.compareAt ? usdToPkr(Number(form.compareAt)) : null,
+      price: Math.round(Number(form.price)),
+      compareAt: form.compareAt ? Math.round(Number(form.compareAt)) : null,
       category: form.category,
       badge: form.badge === "None" ? null : form.badge,
       image: form.images[0] || form.image,
@@ -176,7 +176,7 @@ export default function AdminProductsPage() {
       stock: Number(form.stock),
       supplierId: form.supplierId || null,
       supplierProductUrl: form.supplierProductUrl || null,
-      supplierCost: form.supplierCost ? usdToPkr(Number(form.supplierCost)) : null,
+      supplierCost: form.supplierCost ? Math.round(Number(form.supplierCost)) : null,
     };
 
     try {
@@ -288,33 +288,33 @@ export default function AdminProductsPage() {
             </label>
 
             <label className="block">
-              <span className={labelClass}>Selling price (USD)</span>
+              <span className={labelClass}>Selling price (PKR)</span>
               <input
                 required
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={form.price}
                 onChange={(e) => setForm({ ...form, price: e.target.value })}
-                placeholder="18.00"
+                placeholder="5000"
                 className={`${inputClass} font-tag`}
               />
             </label>
 
             <label className="block">
               <span className={labelClass}>
-                Original price (USD){" "}
+                Original / compare-at price (PKR){" "}
                 <span className="text-white/25">(optional)</span>
               </span>
               <input
                 type="number"
                 min="0"
-                step="0.01"
+                step="1"
                 value={form.compareAt}
                 onChange={(e) =>
                   setForm({ ...form, compareAt: e.target.value })
                 }
-                placeholder="25.00"
+                placeholder="7000"
                 className={`${inputClass} font-tag`}
               />
             </label>
@@ -437,16 +437,16 @@ export default function AdminProductsPage() {
                 </select>
               </label>
               <label className="block">
-                <span className={labelClass}>Your cost from supplier (USD)</span>
+                <span className={labelClass}>Your cost from supplier (PKR)</span>
                 <input
                   type="number"
                   min="0"
-                  step="0.01"
+                  step="1"
                   value={form.supplierCost}
                   onChange={(e) =>
                     setForm({ ...form, supplierCost: e.target.value })
                   }
-                  placeholder="8.00"
+                  placeholder="2500"
                   className={`${inputClass} font-tag`}
                 />
               </label>
@@ -537,7 +537,7 @@ export default function AdminProductsPage() {
                   {p.name}
                 </p>
                 <p className="font-tag text-xs text-white/40 mb-1">
-                  {formatUSD(p.price)} · {p.stock} in stock
+                  {formatPKR(p.price)} · {p.stock} in stock
                 </p>
                 <p className="text-xs text-white/30 mb-3">
                   {supplier ? `📦 ${supplier.name}` : "No supplier linked"}

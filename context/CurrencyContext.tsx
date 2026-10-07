@@ -1,10 +1,10 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import { formatUSD } from "@/lib/currency";
+import { formatPKR } from "@/lib/currency";
 
 type CurrencyContextType = {
-  currency: "USD";
+  currency: "PKR";
   format: (amountPkr: number) => string;
 };
 
@@ -12,7 +12,7 @@ const CurrencyContext = createContext<CurrencyContextType | undefined>(undefined
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
   return (
-    <CurrencyContext.Provider value={{ currency: "USD", format: formatUSD }}>
+    <CurrencyContext.Provider value={{ currency: "PKR", format: formatPKR }}>
       {children}
     </CurrencyContext.Provider>
   );

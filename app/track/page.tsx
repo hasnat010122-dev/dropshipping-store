@@ -4,7 +4,7 @@ import { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { formatUSD } from "@/lib/currency";
+import { formatPKR } from "@/lib/currency";
 
 const statusSteps = [
   { key: "pending", label: "Order placed" },
@@ -190,14 +190,14 @@ function TrackOrderForm() {
                     {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                   </span>
                   <span className="font-tag">
-                    {formatUSD(i.price * i.qty)}
+                    {formatPKR(i.price * i.qty)}
                   </span>
                 </div>
               ))}
             </div>
             <div className="flex justify-between font-display text-lg text-ink border-t border-line pt-4">
               <span>Total</span>
-              <span className="font-tag">{formatUSD(result.total)}</span>
+              <span className="font-tag">{formatPKR(result.total)}</span>
             </div>
           </div>
         )}

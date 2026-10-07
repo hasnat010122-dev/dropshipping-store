@@ -7,10 +7,10 @@ import Footer from "@/components/Footer";
 import CheckoutSteps from "@/components/CheckoutSteps";
 import { useCart } from "@/context/CartContext";
 import { useCurrency } from "@/context/CurrencyContext";
-import { BANK_TRANSFER } from "@/lib/payment";
+import { COD } from "@/lib/payment";
 
 const paymentMethods = [
-  { id: BANK_TRANSFER.id, label: BANK_TRANSFER.label, note: "Transfer to the account shown below" },
+  { id: COD.id, label: COD.label, note: "Pay in cash when your order is delivered to your door" },
 ];
 
 type SavedAddress = {
@@ -38,9 +38,9 @@ export default function CheckoutPage() {
     city: "",
     state: "",
     postalCode: "",
-    country: "",
+    country: "Pakistan",
   });
-  const [paymentMethod, setPaymentMethod] = useState(BANK_TRANSFER.id);
+  const [paymentMethod, setPaymentMethod] = useState(COD.id);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [savedAddresses, setSavedAddresses] = useState<SavedAddress[]>([]);
@@ -66,7 +66,7 @@ export default function CheckoutPage() {
               city: first.city,
               state: first.state || "",
               postalCode: first.postalCode || "",
-              country: first.country || "",
+              country: first.country || "Pakistan",
               phone: first.phone,
             }));
           }
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
   function selectAddress(a: SavedAddress | "new") {
     if (a === "new") {
       setSelectedAddressId("new");
-      setForm((f) => ({ ...f, address: "", addressLine2: "", city: "", state: "", postalCode: "", country: "", phone: "" }));
+      setForm((f) => ({ ...f, address: "", addressLine2: "", city: "", state: "", postalCode: "", country: "Pakistan", phone: "" }));
     } else {
       setSelectedAddressId(a.id);
       setForm((f) => ({
@@ -88,7 +88,7 @@ export default function CheckoutPage() {
         city: a.city,
         state: a.state || "",
         postalCode: a.postalCode || "",
-        country: a.country || "",
+        country: a.country || "Pakistan",
         phone: a.phone,
       }));
     }
@@ -214,11 +214,7 @@ export default function CheckoutPage() {
                   {savedAddresses.map((a) => (
                     <label
                       key={a.id}
-                      className={`flex items-start gap-3 border px-4 py-3 cursor-pointer transition-colors ${
-                        selectedAddressId === a.id
-                          ? "border-ink bg-white"
-                          : "border-line bg-white/50"
-                      }`}
+                      className={`flex items-start gap-3 border px-4 py-3 cursor-pointer transition-colors ${selectedAddressId === a.id ? "border-ink bg-white" : "border-line bg-white/50"}`}
                     >
                       <input
                         type="radio"
@@ -238,11 +234,7 @@ export default function CheckoutPage() {
                     </label>
                   ))}
                   <label
-                    className={`flex items-center gap-3 border px-4 py-3 cursor-pointer transition-colors ${
-                      selectedAddressId === "new"
-                        ? "border-ink bg-white"
-                        : "border-line bg-white/50"
-                    }`}
+                    className={`flex items-center gap-3 border px-4 py-3 cursor-pointer transition-colors ${selectedAddressId === "new" ? "border-ink bg-white" : "border-line bg-white/50"}`}
                   >
                     <input
                       type="radio"
@@ -266,9 +258,7 @@ export default function CheckoutPage() {
                   <input
                     required
                     value={form.customerName}
-                    onChange={(e) =>
-                      setForm({ ...form, customerName: e.target.value })
-                    }
+                    onChange={(e) => setForm({ ...form, customerName: e.target.value })}
                     className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors"
                   />
                 </label>
@@ -299,7 +289,7 @@ export default function CheckoutPage() {
                 </label>
                 <label className="block sm:col-span-2">
                   <span className="text-sm font-body text-ink-soft mb-1.5 block">Country / Region</span>
-                  <input required autoComplete="country-name" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="United States" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                  <input required autoComplete="country-name" value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} placeholder="Pakistan" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
                 </label>
                 <label className="block sm:col-span-2">
                   <span className="text-sm font-body text-ink-soft mb-1.5 block">Street address</span>
@@ -315,11 +305,11 @@ export default function CheckoutPage() {
                 </label>
                 <label className="block">
                   <span className="text-sm font-body text-ink-soft mb-1.5 block">State / Province / Region</span>
-                  <input required autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="State or province" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                  <input autoComplete="address-level1" value={form.state} onChange={(e) => setForm({ ...form, state: e.target.value })} placeholder="Province (e.g. Punjab)" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
                 </label>
                 <label className="block">
-                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Postal / ZIP code</span>
-                  <input required autoComplete="postal-code" value={form.postalCode} onChange={(e) => setForm({ ...form, postalCode: e.target.value })} placeholder="Postal code" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
+                  <span className="text-sm font-body text-ink-soft mb-1.5 block">Postal code</span>
+                  <input autoComplete="postal-code" value={form.postalCode} onChange={(e) => setForm({ ...form, postalCode: e.target.value })} placeholder="e.g. 54000" className="focus-ring w-full border border-line bg-white px-3.5 py-3 outline-none focus:border-ink transition-colors" />
                 </label>
               </div>
             </fieldset>
@@ -335,11 +325,7 @@ export default function CheckoutPage() {
                 {paymentMethods.map((m) => (
                   <label
                     key={m.id}
-                    className={`flex items-center gap-3 border px-4 py-3.5 cursor-pointer transition-colors ${
-                      paymentMethod === m.id
-                        ? "border-ink bg-white"
-                        : "border-line bg-white/50"
-                    }`}
+                    className={`flex items-center gap-3 border px-4 py-3.5 cursor-pointer transition-colors ${paymentMethod === m.id ? "border-ink bg-white" : "border-line bg-white/50"}`}
                   >
                     <input
                       type="radio"
@@ -360,22 +346,17 @@ export default function CheckoutPage() {
                   </label>
                 ))}
               </div>
-              {paymentMethod === BANK_TRANSFER.id && (
-                <div className="mt-4 border border-line bg-paper-dim p-5 text-sm font-body text-ink-soft">
-                  <p className="font-medium text-ink mb-3">Bank transfer details</p>
-                  <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2">
-                    <dt>Account number</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.accountNumber}</dd>
-                  </dl>
-                  <p className="mt-4 text-xs leading-relaxed">
-                    Place the order first, then transfer the exact total and use the order ID shown on the confirmation page as your payment reference. Keep your receipt until payment is confirmed.
-                  </p>
-                </div>
-              )}
+              <div className="mt-4 border border-line bg-paper-dim p-5 text-sm font-body text-ink-soft">
+                <p className="mb-2">
+                  <span className="font-medium text-ink">Cash on Delivery</span> — simply pay the total amount in cash to our delivery partner when your parcel arrives. No advance payment needed.
+                </p>
+                <p className="text-xs leading-relaxed">
+                  Please make sure someone is available at the provided address with the exact amount to avoid delivery delays.
+                </p>
+              </div>
             </fieldset>
 
-            {error && (
-              <p className="text-coral text-sm font-body">{error}</p>
-            )}
+            {error && <p className="text-coral text-sm font-body">{error}</p>}
           </form>
 
           <div className="lg:col-span-2">
@@ -444,6 +425,10 @@ export default function CheckoutPage() {
                   <span>Subtotal</span>
                   <span className="font-tag">{format(total)}</span>
                 </div>
+                <div className="flex justify-between text-sm font-body text-ink-soft">
+                  <span>Delivery</span>
+                  <span className="font-tag">Free (Cash on Delivery)</span>
+                </div>
                 {appliedCoupon && (
                   <div className="flex justify-between text-sm font-body text-emerald-700">
                     <span>Discount</span>
@@ -459,7 +444,7 @@ export default function CheckoutPage() {
                 <span className="font-tag">{format(finalTotal)}</span>
               </div>
               <p className="text-[11px] text-ink-soft/50 font-body mb-5">
-                USD prices are approximate. For the bank transfer, send exactly Rs {finalTotal.toLocaleString()}.
+                All prices are in Pakistani Rupees (PKR). Pay in cash when your order is delivered.
               </p>
               <button
                 type="submit"
@@ -467,7 +452,7 @@ export default function CheckoutPage() {
                 disabled={submitting}
                 className="focus-ring w-full bg-ink text-paper py-3.5 font-body font-medium hover:bg-coral transition-colors disabled:opacity-50 mt-2"
               >
-                {submitting ? "Placing order…" : "Place order"}
+                {submitting ? "Placing order…" : "Place order (Cash on Delivery)"}
               </button>
               <p className="text-[11px] text-ink-soft/40 font-tag text-center mt-3">
                 🔒 Your information is secure and never shared with third parties

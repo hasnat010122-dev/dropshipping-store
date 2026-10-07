@@ -4,8 +4,8 @@ import { getOrderById } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getSessionUserId } from "@/lib/session";
-import { BANK_TRANSFER, paymentLabel } from "@/lib/payment";
-import { formatUSD } from "@/lib/currency";
+import { paymentLabel } from "@/lib/payment";
+import { formatPKR } from "@/lib/currency";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +33,7 @@ export default async function OrderConfirmationPage({
         </h1>
         <p className="font-body text-ink-soft mb-8">
           Thanks, {order.customerName} — we&apos;ve got your order. You&apos;ll
-          get delivery updates on {order.phone}.
+          get delivery updates on {order.phone}. Pay in cash when it arrives.
         </p>
 
         <div className="border border-line bg-white text-left p-6 mb-8">
@@ -51,7 +51,7 @@ export default async function OrderConfirmationPage({
                   {i.name}{i.color ? ` — ${i.color}` : ""} × {i.qty}
                 </span>
                 <span className="font-tag">
-                  {formatUSD(i.price * i.qty)}
+                  {formatPKR(i.price * i.qty)}
                 </span>
               </div>
             ))}
@@ -60,39 +60,39 @@ export default async function OrderConfirmationPage({
             <div className="space-y-1 mb-2">
               <div className="flex justify-between text-sm font-body text-ink-soft">
                 <span>Subtotal</span>
-                <span className="font-tag">{formatUSD(order.subtotal)}</span>
+                <span className="font-tag">{formatPKR(order.subtotal)}</span>
               </div>
               <div className="flex justify-between text-sm font-body text-emerald-700">
                 <span>Discount ({order.couponCode})</span>
                 <span className="font-tag">
-                  − {formatUSD(order.discount)}
+                  − {formatPKR(order.discount)}
                 </span>
               </div>
             </div>
           )}
           <div className="border-t border-line pt-4 flex justify-between font-display text-lg text-ink">
-            <span>Total</span>
-            <span className="font-tag">{formatUSD(order.total)}</span>
+            <span>Total (Cash on Delivery)</span>
+            <span className="font-tag">{formatPKR(order.total)}</span>
           </div>
           <p className="text-xs font-tag text-ink-soft/60 mt-4 uppercase">
             Payment: {paymentLabel(order.paymentMethod)} · Status: {order.status}
           </p>
         </div>
 
-        {order.paymentMethod === BANK_TRANSFER.id && (
-          <div className="border-2 border-coral bg-white text-left p-6 mb-8">
-            <h2 className="font-display text-xl text-ink mb-2">Complete your bank transfer</h2>
-            <p className="text-sm font-body text-ink-soft mb-5">
-              Transfer exactly <strong className="text-ink">Rs {order.total.toLocaleString()}</strong> and use <strong className="text-ink">{order.id.slice(0, 8).toUpperCase()}</strong> as the payment reference.
-            </p>
-            <dl className="grid sm:grid-cols-[9rem_1fr] gap-x-4 gap-y-2 text-sm font-body text-ink-soft">
-              <dt>Account number</dt><dd className="font-tag text-ink break-all">{BANK_TRANSFER.accountNumber}</dd>
-            </dl>
-            <p className="text-xs font-body text-ink-soft mt-5">
-              Keep your transfer receipt. Your order remains pending until the payment is confirmed.
-            </p>
-          </div>
-        )}
+        <div className="border-2 border-coral bg-white text-left p-6 mb-8">
+          <h2 className="font-display text-xl text-ink mb-2">What happens next?</h2>
+          <p className="text-sm font-body text-ink-soft mb-3">
+            Our team will quickly verify your order and then dispatch it for delivery.
+          </p>
+          <ul className="text-sm font-body text-ink-soft list-disc pl-5 space-y-1.5">
+            <li>You&apos;ll receive a confirmation call or message shortly after ordering.</li>
+            <li>Your parcel will be delivered to the address you provided.</li>
+            <li>Please keep <strong className="text-ink">Rs {order.total.toLocaleString("en-PK")}</strong> ready in cash to hand to the delivery agent.</li>
+          </ul>
+          <p className="text-xs font-body text-ink-soft mt-5">
+            You can track your order status anytime using the order ID above on the Track Order page.
+          </p>
+        </div>
 
         <Link
           href="/"
